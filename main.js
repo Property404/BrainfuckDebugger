@@ -9,6 +9,7 @@ const TokenType = Object.freeze({
 	"BF_SHIFT":4,
 	"BF_OUTPUT":5,
 	"BF_INPUT":6,
+	"BF_END":7
 })
 
 // Adapted from Property404/dbfi/src/interpret.c
@@ -86,6 +87,7 @@ function tokenize(source, optimize=true)
 		}
 		byte_index++;
 	}
+	tokens.push({type:TokenType.BF_END});
 	return tokens;
 }
 
@@ -161,21 +163,22 @@ class Debugger
 				}
 				else
 				{
-					// Pass <-- if pass stack empty
-					// Otherwise pop and go to matching ]
-					if (token.pass_stack.length == 0)
-					{
-						token.pass_stack.pop(1);
-						
-						// Shouldn't matter if we jump to or past since
-						// ] on reverse does effectively nothing
-						this.pc = token.partner;
-					}
+					// Go right of matching ]
+					this.pc = token.partner + 1;
 				}
 				break;
 			case TokenType.BF_LOOP_CLOSE:
 				if(!reverse)
 					this.pc = token.partner - 1;
+				else
+				{
+					//	If zero, go to matching [
+					//else pass left
+					if(this.tape[this.pointer] == 0)
+					{
+						this.pc = token.partner;
+					}
+				}
 				break;
 		}
 
