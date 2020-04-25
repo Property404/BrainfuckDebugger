@@ -10,7 +10,8 @@ const TokenType = Object.freeze({
 	"BF_SHIFT":4,
 	"BF_OUTPUT":5,
 	"BF_INPUT":6,
-	"BF_END":7
+	"BF_ZERO":7,
+	"BF_END":8
 })
 
 // Adapted from Property404/dbfi/src/interpret.c
@@ -26,7 +27,8 @@ function tokenize(source, optimize=true)
 
 	for(let i=0;i<source.length;i++)
 	{
-		let character = source[i];
+		const character = source[i];
+
 		if("+-<>[].,".includes(character))
 		{
 			let new_token = {type:null, value:1};
@@ -35,10 +37,19 @@ function tokenize(source, optimize=true)
 			switch(character)
 			{
 				case "[":
-					new_token.type = TokenType.BF_LOOP_OPEN;
-					skip_stack.push(token_index);
-					// Empty pass stack for reverse debugging
-					new_token.pass_stack = [];
+					if( source[i+1] === "-" && source[i+2] === "]")
+					{
+						new_token.type=TokenType.BF_ZERO;
+						new_token.pass_stack = [];
+						i+=2;
+					}
+					else
+					{
+						new_token.type = TokenType.BF_LOOP_OPEN;
+						skip_stack.push(token_index);
+						// Empty pass stack for reverse debugging
+						new_token.pass_counter = 0;
+					}
 					break;
 				case "]":
 					new_token.type = TokenType.BF_LOOP_CLOSE;
@@ -102,7 +113,6 @@ export default class Debugger
 		this.pc = 0; // Program pointer/counter
 		this.pointer = 0; // Data pointer
 		this.tape = {"0":0};
-		console.log(this.tokens.length);
 	}
 
 	displayTape()
@@ -160,6 +170,10 @@ export default class Debugger
 		{
 			this.tape[i] = 0;
 		}
+		for (let token of this.tokens)
+		{
+			token.pass_counter = 0;
+		}
 	}
 
 	step(reverse=false)
@@ -175,13 +189,28 @@ export default class Debugger
 
 		if(token == undefined)
 		{
-			console.log("Undefined Token");
-			console.log("pc="+this.pc);
-			console.log("pointer="+this.pointer);
+			console.err("Undefined Token");
+			console.err("pc="+this.pc);
+			console.err("pointer="+this.pointer);
 			return
 		}
 		switch(token.type)
 		{
+			case TokenType.BF_ZERO:
+				if(reverse)
+				{
+					this.tape[this.pointer] = token.pass_stack.pop();
+					if (this.tape[this.pointer] == null)
+					{
+						throw "Oh my gooooood";
+					}
+				}
+				else
+				{
+					token.pass_stack.push(this.tape[this.pointer]);
+					this.tape[this.pointer] = 0;
+				}
+				break;
 			case TokenType.BF_ADD:
 				if(reverse)
 					this.tape[this.pointer]-=token.value;
@@ -224,7 +253,7 @@ export default class Debugger
 					else
 					{
 						// Otherwise we just pass by and push something onto the pass stack
-						token.pass_stack.push(1);
+						token.pass_counter++;
 					}
 				}
 				else
@@ -247,7 +276,7 @@ export default class Debugger
 						else
 							go to matching [
 					*/
-					if(this.tokens[token.partner].pass_stack.pop() != undefined)
+					if(this.tokens[token.partner].pass_counter == 0);
 					{
 						/* pass left*/
 					}
@@ -274,48 +303,14 @@ export default class Debugger
 }
 
 
-
+/*
 const source = 
-		" ++++++++[->-[->-[->-[-]<]<]<] >++++++++[<++++++++++>-]<[>+>+<<-]>-.>-----.>++++++++++.";
+		" ++++++++[->-[->-[->-[-]<]<]<] ++++++++[<++++++++++>-]<[>+>+<<-]>-.>-----.>++++++++++.";
 let debug = new Debugger(source);
 
-for(let  i=0;!debug.atEnd();i++)
+for(let i=0;!debug.atEnd();i++)
 {
-	/*
-	const hash1=debug.getStateHash();
-	debug.displayTape();
-	*/
 	debug.step();
-
-	/*
-	const hash2=debug.getStateHash();
-	debug.displayTape();
-	debug.step(true);
-
-	const hash3=debug.getStateHash();
-	debug.displayTape();
-	debug.step();
-
-	const hash4=debug.getStateHash();
-	debug.displayTape();
-	console.log("----");
-
-	if(hash1 !== hash3 || hash2 !== hash4)
-	{
-		throw("Houston, we got a problem");
-		break;
-	}
-	*/
 }
 console.log("finished.")
 /*
-while(! debug.atEnd()) { debug.step(); }
-
-while(! debug.atBeginning()) { debug.step(true); }
-
-console.log("\n");
-
-while(! debug.atEnd()) { debug.step(); }
-
-console.log("\n");
-*/

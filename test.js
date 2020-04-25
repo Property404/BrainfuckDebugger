@@ -1,10 +1,15 @@
 import Debugger from './main.mjs'
-function assert(claim, message)
+function assert(claim, message, object)
 {
 	if (message == undefined)
 		message = "<no message>";
 	if(!claim)
+	{
+		console.log("--ASSERTION FAILED--");
+		if(object)
+			object.displayTape();
 		throw "Assertion failed:" + message;
+	}
 }
 function test(func)
 {
@@ -16,7 +21,8 @@ function test(func)
 
 function congruent_state_test(){
 	const sources = ["+++[->++<]>>--->>++",
-		" ++++++++[->-[->-[->-[-]<]<]<] >++++++++[<++++++++++>-]<[>+>+<<-]>-.>-----.>++++++++++."
+		"+++++[-]+++",
+		" ++++++++[->-[->-[->-[-]<]<]<] ++++++++[<++++++++++>-]<[>+>+<<-]>-.>-----.>++++++++++."
 
 	];
 
@@ -28,6 +34,8 @@ function congruent_state_test(){
 		{
 			debug.step();
 		}
+
+
 		const first_final_hash = debug.getStateHash();
 		debug.reset();
 
@@ -44,8 +52,8 @@ function congruent_state_test(){
 
 			const hash4=debug.getStateHash();
 
-			assert(hash1===hash3);
-			assert(hash2===hash4);
+			assert(hash1===hash3, "hash1!==hash3", debug);
+			assert(hash2===hash4, "hash2!==hash4", debug);
 		}
 
 		assert(debug.getStateHash()===first_final_hash, "Final hash failed");
