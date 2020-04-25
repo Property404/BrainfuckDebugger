@@ -2,3 +2,5 @@
 !**/**/
 !.gitignore
 !*.js
+!*.mjs
+node_modules

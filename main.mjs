@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 "use strict";
 const CELL_WIDTH = 256;
 
@@ -30,6 +31,7 @@ function tokenize(source, optimize=true)
 		{
 			let new_token = {type:null, value:1};
 
+			new_token.character=character;
 			switch(character)
 			{
 				case "[":
@@ -89,9 +91,9 @@ function tokenize(source, optimize=true)
 	}
 	tokens.push({type:TokenType.BF_END});
 	return tokens;
-}
+};
 
-class Debugger
+export default class Debugger
 {
 	constructor(source)	
 	{
@@ -103,13 +105,66 @@ class Debugger
 		console.log(this.tokens.length);
 	}
 
-	finished()
+	displayTape()
 	{
-		return this.pc >= this.tokens.length;
+		for(let i=0;i<10;i++)
+		{
+			if(this.tape[i] == undefined)
+				this.tape[i] = 0;
+			process.stdout.write("|"+this.tape[i]);
+		}
+		console.log("| ***"+this.pc+"("+this.tokens[this.pc].character+")***"+this.getStateHash());
+		for(let i=0;i<10;i++)
+		{
+			if(i==this.pointer)
+				process.stdout.write(" ^");
+			else
+				process.stdout.write("  ");
+		}
+		console.log("");
+
+	}
+	getStateHash()
+	{
+		let total = 0;
+		for (let i=0;i<1000;i++)
+		{
+			if(this.tape[i])
+				total+=this.tape[i];
+		}
+		total += this.pointer * 1000;
+		let pcval = this.tokens[this.pc].type;
+		if (pcval === TokenType.BF_LOOP_CLOSE)
+		{
+			pcval = TokenType.BF_LOOP_OPEN;
+		}
+		total += 73*pcval;
+		return total;
+	}
+
+	atEnd()
+	{
+		return this.pc >= this.tokens.length || this.tokens[this.pc].type==TokenType.BF_END;
+	}
+	
+	atBeginning()
+	{
+		return this.pc == 0;
+	}
+
+	reset()
+	{
+		this.pc = 0;
+		this.pointer=0;
+		for(let i in this.tape)
+		{
+			this.tape[i] = 0;
+		}
 	}
 
 	step(reverse=false)
 	{
+		let stepagain = false;
 		if(reverse)
 			this.pc --;
 		
@@ -118,6 +173,13 @@ class Debugger
 		if (this.tape[this.pointer] == undefined)
 			this.tape[this.pointer] = 0;
 
+		if(token == undefined)
+		{
+			console.log("Undefined Token");
+			console.log("pc="+this.pc);
+			console.log("pointer="+this.pointer);
+			return
+		}
 		switch(token.type)
 		{
 			case TokenType.BF_ADD:
@@ -137,10 +199,21 @@ class Debugger
 					this.pointer+=token.value;
 				break;
 			case TokenType.BF_OUTPUT:
-				process.stdout.write(String.fromCharCode(this.tape[this.pointer]));
+				if (!reverse)
+				{
+					let val = this.tape[this.pointer];
+					let ch = String.fromCharCode(val);
+					if(val < 32)
+					{
+						process.stdout.write("<"+val+">");
+					}
+					else
+					{
+						process.stdout.write(ch);
+					}
+				}
 				break;
 			case TokenType.BF_LOOP_OPEN:
-
 				if(!reverse)
 				{
 					// Jump to matching ] if false (zero)
@@ -152,54 +225,97 @@ class Debugger
 					{
 						// Otherwise we just pass by and push something onto the pass stack
 						token.pass_stack.push(1);
-					
-						// Optimize out the [-] pattern
-						if(token.partner == this.pc+2 && this.tokens[this.pc+1].type === '-')
-						{
-							this.tape[this.pointer] = 0;
-							this.pc = token.partner;
-						}
 					}
 				}
 				else
 				{
-					// Go right of matching ]
 					this.pc = token.partner + 1;
+					stepagain = true;
 				}
 				break;
 			case TokenType.BF_LOOP_CLOSE:
 				if(!reverse)
+				{
 					this.pc = token.partner - 1;
+					stepagain=true;
+				}
 				else
 				{
-					//	If zero, go to matching [
-					//else pass left
-					if(this.tape[this.pointer] == 0)
+					/*
+						if partner able to pop:
+							pass left
+						else
+							go to matching [
+					*/
+					if(this.tokens[token.partner].pass_stack.pop() != undefined)
 					{
+						/* pass left*/
+					}
+					{
+						// Go to matching [
+						// This will exit the loop(in reverse)
 						this.pc = token.partner;
 					}
 				}
+				break;
+			case TokenType.BF_END:
+				break;
+			default:
+				console.log("Unknown token: "+token);
 				break;
 		}
 
 		if(!reverse)
 			this.pc ++;
+
+		if(stepagain)
+			this.step(reverse);
 	}
 }
 
 
-const source = " >++++++++[-<+++++++++>]<.>>+>-[+]++>++>+++[>[->+++<<+++>]<<]>-----.>-> +++..+++.>-.<<+[>[+>+]>>]<--------------.>>.+++.------.--------.>+.>+."
+
+const source = 
+		" ++++++++[->-[->-[->-[-]<]<]<] >++++++++[<++++++++++>-]<[>+>+<<-]>-.>-----.>++++++++++.";
 let debug = new Debugger(source);
-while(! debug.finished())
+
+for(let  i=0;!debug.atEnd();i++)
 {
+	/*
+	const hash1=debug.getStateHash();
+	debug.displayTape();
+	*/
 	debug.step();
-}
-const times = 76
-for(let i=0;i<times;i++)
-{
+
+	/*
+	const hash2=debug.getStateHash();
+	debug.displayTape();
 	debug.step(true);
+
+	const hash3=debug.getStateHash();
+	debug.displayTape();
+	debug.step();
+
+	const hash4=debug.getStateHash();
+	debug.displayTape();
+	console.log("----");
+
+	if(hash1 !== hash3 || hash2 !== hash4)
+	{
+		throw("Houston, we got a problem");
+		break;
+	}
+	*/
 }
-for(let i=0;i<times;i++)
-{
-	debug.step(false);
-}
+console.log("finished.")
+/*
+while(! debug.atEnd()) { debug.step(); }
+
+while(! debug.atBeginning()) { debug.step(true); }
+
+console.log("\n");
+
+while(! debug.atEnd()) { debug.step(); }
+
+console.log("\n");
+*/
