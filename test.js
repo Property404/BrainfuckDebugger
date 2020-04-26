@@ -1,4 +1,4 @@
-import Debugger from './main.mjs'
+import Debugger from './Debugger.js'
 function assert(claim, message, object)
 {
 	if (message == undefined)
@@ -22,7 +22,7 @@ function test(func)
 function congruent_state_test(){
 	const sources = ["+++[->++<]>>--->>++",
 		"+++++[-]+++",
-		" ++++++++[->-[->-[->-[-]<]<]<] ++++++++[<++++++++++>-]<[>+>+<<-]>-.>-----.>++++++++++."
+		"++++++++[->-[->-[->-[-]<]<]<] ++++++++[<++++++++++>-]<[>+>+<<-]>-.>-----.>++++++++++."
 
 	];
 
@@ -62,4 +62,3 @@ function congruent_state_test(){
 };
 
 test(congruent_state_test);
-console.log("finished.")

@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 "use strict";
 const CELL_WIDTH = 256;
 
@@ -31,13 +30,13 @@ function tokenize(source, optimize=true)
 
 		if("+-<>[].,".includes(character))
 		{
-			let new_token = {type:null, value:1};
+			let new_token = {type:null, value:1, start:i};
 
 			new_token.character=character;
 			switch(character)
 			{
 				case "[":
-					if( source[i+1] === "-" && source[i+2] === "]")
+					if(optimize && source[i+1] === "-" && source[i+2] === "]")
 					{
 						new_token.type=TokenType.BF_ZERO;
 						new_token.pass_stack = [];
@@ -108,11 +107,28 @@ export default class Debugger
 {
 	constructor(source)	
 	{
+		if(source)
+			this.load(source);
+
+		this.output_callback = (val)=>{};
+		this.input_callback = ()=>{return 0;};
+	}
+
+	load(source){
 		this.source = source;
 		this.tokens = tokenize(source, true);
+		this.tape = {"0":0};
 		this.pc = 0; // Program pointer/counter
 		this.pointer = 0; // Data pointer
-		this.tape = {"0":0};
+		this.reset();
+	}
+
+	getPositionInSource()
+	{
+		let res = this.tokens[this.pc].start;
+		if (res === undefined)
+			return -1;
+		return res;
 	}
 
 	displayTape()
@@ -232,14 +248,8 @@ export default class Debugger
 				{
 					let val = this.tape[this.pointer];
 					let ch = String.fromCharCode(val);
-					if(val < 32)
-					{
-						process.stdout.write("<"+val+">");
-					}
-					else
-					{
-						process.stdout.write(ch);
-					}
+
+					this.output_callback(val);
 				}
 				break;
 			case TokenType.BF_LOOP_OPEN:
@@ -313,4 +323,4 @@ for(let i=0;!debug.atEnd();i++)
 	debug.step();
 }
 console.log("finished.")
-/*
+*/
