@@ -64,6 +64,7 @@ function step(reverse=false)
 {
 	debug.step(reverse);
 	updateHighlight();
+	console.log(debug.tape);
 }
 
 function sleep(ms) {
@@ -72,16 +73,31 @@ function sleep(ms) {
 
 switchToRunMode();
 
+function displayStacks()
+{
+	for(let token of debug.tokens)
+	{
+		if(token.character==='[')
+		{
+			console.log(token.pass_stack);
+			console.log(token.in_progress);
+		}
+	}
+}
+
 document.querySelector("#step-forward-button").addEventListener("click",()=> {
 	step(false);
+	displayStacks();
 });
 
 document.querySelector("#step-back-button").addEventListener("click",()=> {
 	step(true);
+	displayStacks();
 });
 
 document.querySelector("#reset-button").addEventListener("click",()=> {
 	loadAndReset();
 	updateHighlight();
+	displayStacks();
 });
 

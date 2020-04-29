@@ -39,7 +39,7 @@ function tokenize(source, optimize=true)
 					if(optimize && source[i+1] === "-" && source[i+2] === "]")
 					{
 						new_token.type=TokenType.BF_ZERO;
-						new_token.pass_stack = [];
+						new_token.value_stack = [];
 						i+=2;
 					}
 					else
@@ -47,7 +47,8 @@ function tokenize(source, optimize=true)
 						new_token.type = TokenType.BF_LOOP_OPEN;
 						skip_stack.push(token_index);
 						// Empty pass stack for reverse debugging
-						new_token.pass_counter = 0;
+						new_token.pass_stack = [];
+						new_token.in_progress = false;
 					}
 					break;
 				case "]":
@@ -133,7 +134,7 @@ export default class Debugger
 
 	displayTape()
 	{
-		for(let i=0;i<10;i++)
+		for(let i=0;i<30;i++)
 		{
 			if(this.tape[i] == undefined)
 				this.tape[i] = 0;
@@ -158,13 +159,13 @@ export default class Debugger
 			if(this.tape[i])
 				total+=this.tape[i];
 		}
-		total += this.pointer * 1000;
+		total += this.pointer * 100000;
 		let pcval = this.tokens[this.pc].type;
 		if (pcval === TokenType.BF_LOOP_CLOSE)
 		{
 			pcval = TokenType.BF_LOOP_OPEN;
 		}
-		total += 73*pcval;
+		total += 1000*pcval;
 		return total;
 	}
 
@@ -188,7 +189,8 @@ export default class Debugger
 		}
 		for (let token of this.tokens)
 		{
-			token.pass_counter = 0;
+			token.pass_stack = [];
+			token.in_progress = false;
 		}
 	}
 
@@ -215,7 +217,7 @@ export default class Debugger
 			case TokenType.BF_ZERO:
 				if(reverse)
 				{
-					this.tape[this.pointer] = token.pass_stack.pop();
+					this.tape[this.pointer] = token.value_stack.pop();
 					if (this.tape[this.pointer] == null)
 					{
 						throw "Oh my gooooood";
@@ -223,16 +225,21 @@ export default class Debugger
 				}
 				else
 				{
-					token.pass_stack.push(this.tape[this.pointer]);
+					token.value_stack.push(this.tape[this.pointer]);
 					this.tape[this.pointer] = 0;
 				}
 				break;
+
 			case TokenType.BF_ADD:
 				if(reverse)
 					this.tape[this.pointer]-=token.value;
 				else
 					this.tape[this.pointer]+=token.value;
 
+				if (this.tape[this.pointer]<0 || this.tape[this.pointer]>255)
+				{
+					//console.log("OVERFLOW");
+				}
 				this.tape[this.pointer]%=CELL_WIDTH;
 				if(this.tape[this.pointer] < 0)
 					this.tape[this.pointer] = CELL_WIDTH+this.tape[this.pointer];
@@ -249,52 +256,51 @@ export default class Debugger
 					let val = this.tape[this.pointer];
 					let ch = String.fromCharCode(val);
 
-					this.output_callback(val);
+					this.output_callback(ch);
 				}
 				break;
 			case TokenType.BF_LOOP_OPEN:
 				if(!reverse)
 				{
-					// Jump to matching ] if false (zero)
-					if(!this.tape[this.pointer])
+					if(this.tape[this.pointer])
 					{
-						this.pc = token.partner;
+						if(!token.in_progress)
+							token.pass_stack.push(0);
+						token.in_progress = true;
+						token.pass_stack[token.pass_stack.length-1]++;
 					}
 					else
 					{
-						// Otherwise we just pass by and push something onto the pass stack
-						token.pass_counter++;
+						token.in_progress = false;
+						// Otherwise we just pass by 
+						this.pc = token.partner;
 					}
 				}
 				else
 				{
-					this.pc = token.partner + 1;
-					stepagain = true;
+					if(token.pass_stack.slice(-1)[0]>token.in_progress)
+					{
+						token.pass_stack[token.pass_stack.length-1]--;
+						this.pc = token.partner;
+						//token.in_progress = false;
+					}
+					else
+					{
+						token.pass_stack.pop();
+						token.in_progress = false;
+					}
 				}
 				break;
 			case TokenType.BF_LOOP_CLOSE:
 				if(!reverse)
 				{
-					this.pc = token.partner - 1;
-					stepagain=true;
+					this.pc = token.partner-1;
+					stepagain = true;
 				}
 				else
 				{
-					/*
-						if partner able to pop:
-							pass left
-						else
-							go to matching [
-					*/
-					if(this.tokens[token.partner].pass_counter == 0);
-					{
-						/* pass left*/
-					}
-					{
-						// Go to matching [
-						// This will exit the loop(in reverse)
-						this.pc = token.partner;
-					}
+					this.pc = token.partner+1;
+					stepagain = true;
 				}
 				break;
 			case TokenType.BF_END:
