@@ -176,7 +176,6 @@ function rewind_test(){
 
 function pinpoint_test(){
 	let code = ">++<.>>+>-[+]++>++>+++[>[->+++<<+++>]<<]";
-	code = ">>>>>>+>+>+[[->+<]<]";
 	let debug=new Debugger(code);
 
 	let i=0;
