@@ -75,6 +75,12 @@ button{
 	font-size: 2rem;
 }
 
+button[disabled]
+{
+	background-color:grey;
+	color:#bbb;
+}
+
 @media(min-width:30rem){
 	.app{
 	grid-template-areas:

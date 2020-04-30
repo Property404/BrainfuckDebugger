@@ -1,14 +1,24 @@
 import {Debugger} from "./Debugger.js";
 
+const PAUSE_BUTTON_TEXT = "Pause";
+const PLAY_BUTTON_TEXT = "Run";
 const Mode = Object.freeze({
 	"EDIT_MODE":1,
 	"TRANSITION_MODE":2,
-	"RUN_MODE":3});
+	"DEBUG_MODE":3,
+	"PLAY_MODE":4,
+});
 
-let debug = new Debugger();
 let mode = Mode.EDIT_MODE;
+let debug = new Debugger();
 
 
+function switchToPlayMode()
+{
+	switchToDebugMode();
+	mode = Mode.PLAY_MODE;
+	updateButtons();
+}
 
 function switchToEditMode()
 {
@@ -18,12 +28,19 @@ function switchToEditMode()
 	document.querySelector("#editor-view").style.display = "block";
 	document.querySelector("#debug-view").style.display = "none";
 	mode = Mode.EDIT_MODE;
+	updateButtons();
 }
 
-function switchToRunMode()
+function switchToDebugMode()
 {
-	if(mode === Mode.RUN_MODE)
+	if(mode === Mode.DEBUG_MODE)
 	{
+		return;
+	}
+	if(mode === Mode.PLAY_MODE)
+	{
+		mode = Mode.DEBUG_MODE;
+		updateButtons();
 		return;
 	}
 	mode = Mode.TRANSITION_MODE;
@@ -38,7 +55,8 @@ function switchToRunMode()
 
 	updateHighlight();
 
-	mode = Mode.RUN_MODE;
+	mode = Mode.DEBUG_MODE;
+	updateButtons();
 }
 
 function updateHighlight()
@@ -58,20 +76,54 @@ function updateHighlight()
 	debug_view.innerHTML+=postchunk;
 }
 
+function updateButtons()
+{
+	if(debug.atEnd())
+	{
+		document.querySelector("#playpause-button").disabled=true;
+		document.querySelector("#step-forward-button").disabled=true;
+	}
+	else
+	{
+		document.querySelector("#playpause-button").disabled=false;
+		document.querySelector("#step-forward-button").disabled=false;
+	}
+
+	if(debug.atBeginning())
+	{
+		document.querySelector("#step-back-button").disabled=true;
+	}
+	else
+	{
+		document.querySelector("#step-back-button").disabled=false;
+	}
+
+	if(mode === Mode.PLAY_MODE)
+	{
+		document.querySelector("#playpause-button").innerHTML=PAUSE_BUTTON_TEXT;
+	}
+	else
+	{
+		document.querySelector("#playpause-button").innerHTML=PLAY_BUTTON_TEXT;
+	}
+}
+
 function loadAndReset()
 {
 	let textarea = document.querySelector(".editor textarea");
 	const source = textarea.value;
 	/* This causes debug to reset, as well*/
 	debug.load(source);
+	updateButtons();
 }
 
 function step(reverse=false)
 {
 	debug.step(reverse);
 	updateHighlight();
-	console.log(debug.tape);
+	updateButtons();
 }
+
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -91,31 +143,55 @@ function displayStacks()
 
 
 document.querySelector("#step-forward-button").addEventListener("click",()=> {
-	switchToRunMode();
+	switchToDebugMode();
 	if(!debug.atEnd())
 	{
 		step(false);
-		displayStacks();
 	}
 });
 
+function pause()
+{
+	document.querySelector("#playpause-button").removeEventListener("click",pause);
+	document.querySelector("#playpause-button").addEventListener("click",play);
+	switchToDebugMode();
+}
+async function play(){
+	switchToPlayMode();
+	document.querySelector("#playpause-button").removeEventListener("click",play);
+	document.querySelector("#playpause-button").addEventListener("click",pause);
+	while(!debug.atEnd() && mode === Mode.PLAY_MODE)
+	{
+		step();
+		await sleep(0);
+	}
+	if(mode === Mode.PLAY_MODE)
+	{
+		pause();
+	}
+}
+
 document.querySelector("#step-back-button").addEventListener("click",()=> {
-	switchToRunMode();
+	switchToDebugMode();
 	if(!debug.atBeginning())
 	{
 		step(true);
-		displayStacks();
 	}
 });
 
+document.querySelector("#playpause-button").addEventListener("click",play);
+
 document.querySelector("#reset-button").addEventListener("click",()=> {
-	switchToRunMode();
+	switchToDebugMode();
 	loadAndReset();
 	updateHighlight();
-	displayStacks();
 });
 
 document.querySelector("#debug-view").addEventListener("click", ()=>{
-	switchToEditMode();
+	if(mode === Mode.DEBUG_MODE)
+		switchToEditMode();
 });
 
+debug.output_callback=(val)=>{
+	document.querySelector(".terminal").innerHTML+=val;
+};
