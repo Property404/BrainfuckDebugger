@@ -3,4 +3,6 @@
 !.gitignore
 !*.js
 !*.mjs
+!*.html
+!*.css
 node_modules

@@ -1,0 +1,85 @@
+*{
+	box-sizing:border-box;
+}
+
+html,body{
+	height:100%;
+	margin:0;
+	background-color: #333;
+	color:white;
+}
+
+.app{
+	display:grid;
+	height:100%;
+	width:100%;
+	grid-template-rows:min-content auto min-content;
+	grid-template-areas:
+	"header"
+	"editor"
+	"terminal";
+}
+
+.toolbox{
+	display:flex;
+}
+.header{
+	grid-area: header;
+	display:flex;
+}
+.editor{
+	background-color:white;
+	color:black;
+	grid-area: editor;
+	font-family:monospace;
+	position:relative;
+}
+
+#editor-view{
+	width: 100%;
+	height:100%;
+}
+#debug-view{
+	display:none;
+	max-width: 100%;
+	max-height:100%;
+	white-space:pre;
+	background-color:transparent;
+	background-color:red;
+	word-wrap: break-word;
+}
+.terminal{
+	background-color:black;
+	color:green;
+	font-family:monospace;
+	grid-area:terminal;
+}
+
+.tape{
+background-color:green;
+width:20rem;
+}
+
+.highlight{
+	color:white;
+	background-color:black;
+}
+
+button{
+	background-color:blue;
+	border-radius:30%;
+	color:black;
+	border:4px solid;
+	border-color:black;
+	font-size: 2rem;
+}
+
+@media(min-width:30rem){
+	.app{
+	grid-template-areas:
+	"header header"
+	"editor terminal";
+	grid-template-columns: 1fr 1fr;
+	grid-gap:.4rem;
+	}
+}

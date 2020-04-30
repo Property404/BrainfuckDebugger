@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Brainfuck Debugger</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<div class="app">
+		<header class="header">
+			<nav class="toolbox">
+				<button id="reset-button">&lt;&lt;</button>
+				<button id="step-back-button">&lt;</button>
+				<button id="step-forward-button">&gt;</button>
+			</nav>
+			<div class="tape">
+			</div>
+		</header>
+		<div class="editor">
+			<textarea id="editor-view">++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.</textarea>
+			<code id="debug-view"></code>
+		</div>
+		<div class="terminal">
+			Lorem reiciendis repellat eius id
+		</div>
+	</div>
+	<script src="controller.js" type="module"></script>
+</body>
+</html>
