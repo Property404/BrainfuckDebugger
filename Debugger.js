@@ -37,7 +37,7 @@ function tokenize(source, optimize=true)
 			switch(character)
 			{
 				case "[":
-					if(optimize && source[i+1] === "-" && source[i+2] === "]")
+					if(optimize && (source[i+1] === "-" || source[i+1] === "+") && source[i+2] === "]")
 					{
 						new_token.type=TokenType.BF_ZERO;
 						new_token.value_stack = [];
