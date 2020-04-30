@@ -1,24 +1,28 @@
 "use strict";
 const CELL_WIDTH = 256;
 
-
 export const TokenType = Object.freeze({
+	// Standard Brainfuck commands
 	"BF_LOOP_OPEN":1,
 	"BF_LOOP_CLOSE":2,
 	"BF_ADD":3,
 	"BF_SHIFT":4,
 	"BF_OUTPUT":5,
 	"BF_INPUT":6,
+
+	// Represents a [-] like construct
+	// Automatically brings the value the pointer is pointing to to zero
 	"BF_ZERO":7,
-	"BF_END":8,
-	"BF_START":9
+
+	// Cushioning for the beginning and end of the token array
+	"BF_START":8,
+	"BF_END":9
 });
 
 // Adapted from Property404/dbfi/src/interpret.c
 // See original source for helpful comments or lack thereof
 function tokenize(source, optimize=true)
 {
-	let byte_index = 0;
 	let line_index = 0;
 	let token_index = 0;
 
@@ -37,6 +41,7 @@ function tokenize(source, optimize=true)
 			switch(character)
 			{
 				case "[":
+					// Optimize out [-] and [+] into one token
 					if(optimize && (source[i+1] === "-" || source[i+1] === "+") && source[i+2] === "]")
 					{
 						new_token.type=TokenType.BF_ZERO;
@@ -47,7 +52,9 @@ function tokenize(source, optimize=true)
 					{
 						new_token.type = TokenType.BF_LOOP_OPEN;
 						skip_stack.push(token_index);
-						// Empty pass stack for reverse debugging
+						// Each entry  in the pass stack is used to determine
+						// how many times we've gone through a loop
+						// This allows for reverse debugging
 						new_token.pass_stack = [];
 						new_token.in_progress = false;
 					}
@@ -99,7 +106,6 @@ function tokenize(source, optimize=true)
 		{
 			line_index++;
 		}
-		byte_index++;
 	}
 	tokens.unshift({type:TokenType.BF_START,value:0});
 	tokens.push({type:TokenType.BF_END});
@@ -113,7 +119,7 @@ function tokenize(source, optimize=true)
 		}
 	}
 	return tokens;
-};
+}
 
 export class Debugger
 {
@@ -143,25 +149,7 @@ export class Debugger
 		return res;
 	}
 
-	displayTape()
-	{
-		for(let i=0;i<30;i++)
-		{
-			if(this.tape[i] == undefined)
-				this.tape[i] = 0;
-			process.stdout.write("|"+this.tape[i]);
-		}
-		console.log("| ***"+this.pc+"("+this.tokens[this.pc].character+")***"+this.getStateHash());
-		for(let i=0;i<10;i++)
-		{
-			if(i==this.pointer)
-				process.stdout.write(" ^");
-			else
-				process.stdout.write("  ");
-		}
-		console.log("");
-
-	}
+	// Get a unique-ish integer valued tied to our current state
 	getStateHash()
 	{
 		let total = 0;
@@ -218,10 +206,7 @@ export class Debugger
 
 		if(token == undefined)
 		{
-			console.err("Undefined Token");
-			console.err("pc="+this.pc);
-			console.err("pointer="+this.pointer);
-			return
+			throw "Found undefined token";
 		}
 		switch(token.type)
 		{
@@ -247,10 +232,6 @@ export class Debugger
 				else
 					this.tape[this.pointer]+=token.value;
 
-				if (this.tape[this.pointer]<0 || this.tape[this.pointer]>255)
-				{
-					//console.log("OVERFLOW");
-				}
 				this.tape[this.pointer]%=CELL_WIDTH;
 				if(this.tape[this.pointer] < 0)
 					this.tape[this.pointer] = CELL_WIDTH+this.tape[this.pointer];
@@ -318,8 +299,7 @@ export class Debugger
 			case TokenType.BF_END:
 				break;
 			default:
-				console.log("Unknown token: "+token);
-				break;
+				throw "Found unknown token";
 		}
 
 		if(!reverse)
@@ -329,16 +309,3 @@ export class Debugger
 			this.step(reverse);
 	}
 }
-
-
-/*
-const source = 
-		" ++++++++[->-[->-[->-[-]<]<]<] ++++++++[<++++++++++>-]<[>+>+<<-]>-.>-----.>++++++++++.";
-let debug = new Debugger(source);
-
-for(let i=0;!debug.atEnd();i++)
-{
-	debug.step();
-}
-console.log("finished.")
-*/

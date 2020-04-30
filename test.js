@@ -1,4 +1,4 @@
-import {TokenType, Debugger} from './Debugger.js'
+import {TokenType, Debugger} from './Debugger.js';
 function assert(claim, message, object)
 {
 	if (message == undefined)
@@ -95,7 +95,7 @@ function congruent_state_test(){
 		let debug = new Debugger(source.code);
 
 		let output = "";
-		debug.output_callback = (val)=>{output+=val;}
+		debug.output_callback = (val)=>{output+=val;};
 
 		while(!debug.atEnd())
 		{
@@ -128,7 +128,7 @@ function congruent_state_test(){
 		if(assert(debug.getStateHash()===first_final_hash, "Final hash failed"))return false;
 	}
 	return true;
-};
+}
 
 function rewind_test(){
 	let debug=new Debugger();
@@ -141,7 +141,7 @@ function rewind_test(){
 		if(assert(debug.pc === 0))return false;
 		if(assert(debug.pointer === 0))return false;
 
-		debug.output_callback = (val)=>{ output+=val; }
+		debug.output_callback = (val)=>{ output+=val; };
 
 		let initial_hash = debug.getStateHash();
 

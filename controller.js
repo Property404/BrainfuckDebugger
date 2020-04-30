@@ -117,5 +117,5 @@ document.querySelector("#reset-button").addEventListener("click",()=> {
 
 document.querySelector("#debug-view").addEventListener("click", ()=>{
 	switchToEditMode();
-})
+});
 
