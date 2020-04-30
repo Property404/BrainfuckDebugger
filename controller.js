@@ -1,4 +1,4 @@
-import Debugger from "./Debugger.js";
+import {Debugger} from "./Debugger.js";
 
 const Mode = Object.freeze({
 	"EDIT_MODE":1,
@@ -12,23 +12,29 @@ let mode = Mode.EDIT_MODE;
 
 function switchToEditMode()
 {
+	if(mode === Mode.EDIT_MODE)
+		return;
 	mode = Mode.TRANSITION_MODE;
-	document.querySelector(".editor textarea").style.display = "block";
-	document.querySelector(".editor .debug-view").style.display = "none";
-	mode = Mode.TRANSITION_MODE;
+	document.querySelector("#editor-view").style.display = "block";
+	document.querySelector("#debug-view").style.display = "none";
+	mode = Mode.EDIT_MODE;
 }
 
 function switchToRunMode()
 {
+	if(mode === Mode.RUN_MODE)
+	{
+		return;
+	}
 	mode = Mode.TRANSITION_MODE;
 	loadAndReset();
-	let textarea = document.querySelector(".editor textarea");
-	let debug_view = document.querySelector(".editor .debug-view");
+	let textarea = document.querySelector("#editor-view");
+	let debug_view = document.querySelector("#debug-view");
 
 	textarea.style.display = "none";
 	debug_view.style.display = "block";
 
-	debug_view.innerHTML = textarea.textContent;
+	debug_view.innerHTML = textarea.value;
 
 	updateHighlight();
 
@@ -37,7 +43,7 @@ function switchToRunMode()
 
 function updateHighlight()
 {
-	let debug_view = document.querySelector(".editor .debug-view");
+	let debug_view = document.querySelector("#debug-view");
 	const pos=debug.getPositionInSource();
 	const prechunk = debug.source.substring(0,pos);
 	const postchunk = debug.source.substring(pos+1);
@@ -55,7 +61,7 @@ function updateHighlight()
 function loadAndReset()
 {
 	let textarea = document.querySelector(".editor textarea");
-	const source = textarea.textContent;
+	const source = textarea.value;
 	/* This causes debug to reset, as well*/
 	debug.load(source);
 }
@@ -71,8 +77,6 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-switchToRunMode();
-
 function displayStacks()
 {
 	for(let token of debug.tokens)
@@ -85,19 +89,33 @@ function displayStacks()
 	}
 }
 
+
 document.querySelector("#step-forward-button").addEventListener("click",()=> {
-	step(false);
-	displayStacks();
+	switchToRunMode();
+	if(!debug.atEnd())
+	{
+		step(false);
+		displayStacks();
+	}
 });
 
 document.querySelector("#step-back-button").addEventListener("click",()=> {
-	step(true);
-	displayStacks();
+	switchToRunMode();
+	if(!debug.atBeginning())
+	{
+		step(true);
+		displayStacks();
+	}
 });
 
 document.querySelector("#reset-button").addEventListener("click",()=> {
+	switchToRunMode();
 	loadAndReset();
 	updateHighlight();
 	displayStacks();
 });
+
+document.querySelector("#debug-view").addEventListener("click", ()=>{
+	switchToEditMode();
+})
 

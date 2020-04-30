@@ -1,4 +1,4 @@
-import Debugger from './Debugger.js'
+import {TokenType, Debugger} from './Debugger.js'
 function assert(claim, message, object)
 {
 	if (message == undefined)
@@ -8,8 +8,10 @@ function assert(claim, message, object)
 		console.log("--ASSERTION FAILED--");
 		if(object)
 			object.displayTape();
-		throw "Assertion failed:" + message;
+		console.log("Assertion failed:" + message);
+	return true;
 	}
+	return false;
 }
 function test(func)
 {
@@ -56,8 +58,39 @@ const SOURCES = [
 		code:" >++++++++[-<+++++++++>]<.>>+>-[+]++>++>+++[>[->+++<<+++>]<<]>-----.>-> +++..+++.>-.<<+[>[+>+]>>]<--------------.>>.+++.------.--------.>+.>+.",
 		expected_result:"Hello World!\n"
 	}
+	/*,
+	{
+		code:"++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.",
+		expected_result:"Hello World!\n"
+	}
+	*/
 ];
 
+function basic_validation_test(){
+	for(let source of SOURCES)
+	{
+		let debug = new Debugger(source.code);
+		for(let token of debug.tokens)
+		{
+			if (token.partner)
+			{
+				let self_type = token.type;
+				let partner_type = debug.tokens[token.partner].type;
+				if(self_type == TokenType.BF_LOOP_CLOSE)
+				{
+					if(assert(partner_type ===TokenType.BF_LOOP_OPEN, "] should have [ as a partner"))return false;
+				}
+				else
+				{
+					if(assert(self_type == TokenType.BF_LOOP_OPEN, "Non-loop token has partner"))return false;
+					if(assert(partner_type ===TokenType.BF_LOOP_CLOSE, "[ should have ] as a partner"))return false;
+				}
+			}
+		}
+	}
+	return true;
+
+}
 function congruent_state_test(){
 	for(let source of SOURCES)
 	{
@@ -90,11 +123,11 @@ function congruent_state_test(){
 
 			const hash4=debug.getStateHash();
 
-			assert(hash1===hash3, "hash1!==hash3", debug);
-			assert(hash2===hash4, "hash2!==hash4", debug);
+			if(assert(hash1===hash3, "hash1!==hash3", debug))return false;
+			if(assert(hash2===hash4, "hash2!==hash4", debug))return false;
 		}
 
-		assert(debug.getStateHash()===first_final_hash, "Final hash failed");
+		if(assert(debug.getStateHash()===first_final_hash, "Final hash failed"))return false;
 	}
 	return true;
 };
@@ -106,9 +139,9 @@ function rewind_test(){
 		let output="";
 		debug.load(source.code);
 
-		assert(debug.source === source.code);
-		assert(debug.pc === 0);
-		assert(debug.pointer === 0);
+		if(assert(debug.source === source.code))return false;
+		if(assert(debug.pc === 0))return false;
+		if(assert(debug.pointer === 0))return false;
 
 		debug.output_callback = (val)=>{ output+=val; }
 
@@ -121,7 +154,7 @@ function rewind_test(){
 
 		let final_hash = debug.getStateHash();
 
-		assert(output === source.expected_result, "Before rewind: expected output not matched");
+		if(assert(output === source.expected_result, "Before rewind: expected output not matched"))return false;
 
 
 		/* Rewind */
@@ -130,7 +163,7 @@ function rewind_test(){
 			debug.step(true);
 		}
 
-		assert(debug.getStateHash() == initial_hash, "Initial hash is not the same");
+		if(assert(debug.getStateHash() == initial_hash, "Initial hash is not the same"))return false;
 
 		output="";
 		while(!debug.atEnd())
@@ -138,7 +171,7 @@ function rewind_test(){
 			debug.step();
 		}
 
-		assert(output === source.expected_result, "After rewind: expected output not matched");
+		if(assert(output === source.expected_result, "After rewind: expected output not matched"))return false;
 	}
 	return true;
 }
@@ -159,7 +192,7 @@ function pinpoint_test(){
 		{
 			debug.step(true);
 		}
-		assert(debug.getStateHash() === initial_hash, "i: "+i+" pc:"+pc);
+		if(assert(debug.getStateHash() === initial_hash, "i: "+i+" pc:"+pc))return false;
 		for(let j=0;j<i;j++)
 		{
 			debug.step();
@@ -168,7 +201,7 @@ function pinpoint_test(){
 	return true;
 }
 
-
+test(basic_validation_test);
 test(congruent_state_test);
 test(rewind_test);
 test(pinpoint_test);

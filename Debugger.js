@@ -2,7 +2,7 @@
 const CELL_WIDTH = 256;
 
 
-const TokenType = Object.freeze({
+export const TokenType = Object.freeze({
 	"BF_LOOP_OPEN":1,
 	"BF_LOOP_CLOSE":2,
 	"BF_ADD":3,
@@ -10,8 +10,9 @@ const TokenType = Object.freeze({
 	"BF_OUTPUT":5,
 	"BF_INPUT":6,
 	"BF_ZERO":7,
-	"BF_END":8
-})
+	"BF_END":8,
+	"BF_START":9
+});
 
 // Adapted from Property404/dbfi/src/interpret.c
 // See original source for helpful comments or lack thereof
@@ -100,11 +101,21 @@ function tokenize(source, optimize=true)
 		}
 		byte_index++;
 	}
+	tokens.unshift({type:TokenType.BF_START,value:0});
 	tokens.push({type:TokenType.BF_END});
+
+	// Since we added a token at beginning, we have to shift now
+	for(let index in tokens)
+	{
+		if(tokens[index].partner)
+		{
+			tokens[index].partner += 1;
+		}
+	}
 	return tokens;
 };
 
-export default class Debugger
+export class Debugger
 {
 	constructor(source)	
 	{
@@ -303,6 +314,7 @@ export default class Debugger
 					stepagain = true;
 				}
 				break;
+			case TokenType.BF_START:
 			case TokenType.BF_END:
 				break;
 			default:
