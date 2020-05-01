@@ -1,3 +1,23 @@
+:root{
+	--bg-color: #d2d2dd;
+	--button-normal-bg-color: rgb(225, 236, 244);
+	--button-normal-fg-color: rgb(57, 115, 157);
+	--button-normal-border-color: rgb(122, 167, 199);
+	--button-hover-bg-color: rgb(204, 225, 240);
+	--button-hover-fg-color: rgb(44, 87, 119);
+	--button-hover-border-color: rgb(122, 167, 199);
+	--button-disabled-bg-color: #d5d5d5;
+	--button-disabled-fg-color: #ccc;
+	--button-disabled-border-color: #ccc;
+
+	--editor-normal-bg-color: #fff;
+	--editor-normal-fg-color: #000;
+	--editor-disabled-bg-color: #f4f4f4;
+	--editor-disabled-fg-color: #000;
+
+	--highlight-bg-color: var(--editor-normal-fg-color);
+	--highlight-fg-color: var(--editor-normal-bg-color);
+}
 *{
 	box-sizing:border-box;
 }
@@ -5,8 +25,7 @@
 html,body{
 	height:100%;
 	margin:0;
-	background-color: #333;
-	color:white;
+	background-color: var(--bg-color);
 }
 
 .app{
@@ -28,36 +47,40 @@ html,body{
 	display:flex;
 }
 .editor{
-	background-color:white;
-	color:black;
 	grid-area: editor;
 	font-family:monospace;
 	position:relative;
 }
 
 #editor-view{
+	background-color:var(--editor-normal-bg-color);
+	color:var(--editor-normal-fg-color);
 	width: 100%;
 	height:100%;
 	margin:0;
+	border:none;
 	white-space:pre-wrap;
 }
 #debug-view{
+	background-color:var(--editor-disabled-bg-color);
+	color:var(--editor-disabled-fg-color);
 	display:none;
-	background-color:transparent;
 	margin:0;
 	border-style: none;
+	min-width:100%;
+	min-height:100%;
 	white-space:pre-wrap;
 }
 .terminal{
 	background-color:black;
-	color:green;
+	color:#00FF00;
 	font-family:monospace;
 	grid-area:terminal;
 	white-space:pre-wrap;
 }
 
 .tape{
-background-color:green;
+background-color:transparent;
 width:20rem;
 }
 
@@ -67,18 +90,29 @@ width:20rem;
 }
 
 button{
-	background-color:blue;
+	background-color:var(--button-normal-bg-color);
+	color:var(--button-normal-fg-color);
+	border-color:var(--button-normal-border-color);
+	margin:.05rem;
 	border-radius:30%;
-	color:black;
-	border:4px solid;
-	border-color:black;
-	font-size: 2rem;
+	border:2px solid;
+	font-size: 1.7rem;
+	cursor:pointer;
+}
+
+button:hover
+{
+	background-color:var(--button-hover-bg-color);
+	color:var(--button-hover-fg-color);
+	border-color:var(--button-hover-border-color);
 }
 
 button[disabled]
 {
-	background-color:grey;
-	color:#bbb;
+	background-color:var(--button-disabled-bg-color);
+	color:var(--button-disabled-fg-color);
+	border-color:var(--button-disabled-border-color);
+	cursor:initial;
 }
 
 @media(min-width:30rem){
