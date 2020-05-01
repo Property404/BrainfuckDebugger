@@ -1,7 +1,8 @@
-import {Debugger} from "./Debugger.js";
+import {TokenType,Debugger} from "./Debugger.js";
 
 const PAUSE_BUTTON_TEXT = "Pause";
 const PLAY_BUTTON_TEXT = "Run";
+const MIN_CELLS = 50;
 const Mode = Object.freeze({
 	"EDIT_MODE":1,
 	"TRANSITION_MODE":2,
@@ -11,6 +12,7 @@ const Mode = Object.freeze({
 
 let mode = Mode.EDIT_MODE;
 let debug = new Debugger();
+let highest_cell = -1;
 
 
 function switchToPlayMode()
@@ -115,12 +117,54 @@ function loadAndReset()
 	/* This causes debug to reset, as well*/
 	debug.load(source);
 	updateButtons();
+	clearTape();
 }
 
+function clearTape()
+{
+	updateTape();
+	for(let i=0;i<highest_cell;i++)
+	{
+		let cell = document.querySelector("#cell-"+i).innerHTML=0;
+	}
+}
+function updateTape()
+{
+	let pointer = debug.pointer;
+	let desired_amount_of_cells = pointer>MIN_CELLS?pointer:MIN_CELLS;
+	if(desired_amount_of_cells > highest_cell)
+	{
+		for(let i=highest_cell+1;i<=desired_amount_of_cells;i++)
+		{
+			let template = document.querySelector("#cell-template");
+			let new_cell = template.cloneNode();
+			new_cell.removeAttribute("style");
+			new_cell.id="cell-"+i;
+			new_cell.innerHTML = "0";
+			document.querySelector(".tape").appendChild(new_cell);
+		}
+		highest_cell = desired_amount_of_cells;
+	}
+	if(pointer != undefined)
+	{
+		let val = debug.tape[pointer];
+		if(val===undefined)val=0;
+
+		let current_cell = document.querySelector("#cell-"+pointer);
+		let old_cell = document.querySelector(".cell.active")
+		if(old_cell)
+			old_cell.classList.remove("active");
+		current_cell.innerHTML=val;
+		current_cell.classList.add("active");
+	}
+}
 function step(reverse=false)
 {
+	let will_update_tape = false;
+	let next_token = null
 	debug.step(reverse);
 	updateHighlight();
+	updateTape();
 	updateButtons();
 }
 
@@ -195,3 +239,5 @@ document.querySelector("#debug-view").addEventListener("click", ()=>{
 debug.output_callback=(val)=>{
 	document.querySelector(".terminal").innerHTML+=val;
 };
+
+clearTape();
