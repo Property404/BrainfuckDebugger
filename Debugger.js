@@ -84,6 +84,7 @@ function tokenize(source, optimize=true)
 
 				case ',':
 					new_token.type = TokenType.BF_INPUT;
+					new_token.value_stack = [];
 					break;
 
 				default:
@@ -241,6 +242,23 @@ export class Debugger
 					this.pointer-=token.value;
 				else
 					this.pointer+=token.value;
+				break;
+			case TokenType.BF_INPUT:
+				if(!reverse)
+				{
+					const new_val  = this.input_callback(); 
+					const old_val  = this.tape[this.pointer];
+					if(!Number.isInteger(new_val))
+					{
+						throw "Debugger expected integer input(eg an ASCII value)";
+					}
+					this.tape[this.pointer] = new_val;
+					token.value_stack.push(old_val);
+				}
+				else
+				{
+					this.tape[this.pointer] = token.value_stack.pop();
+				}
 				break;
 			case TokenType.BF_OUTPUT:
 				if (!reverse)
