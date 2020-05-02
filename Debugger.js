@@ -248,12 +248,21 @@ export class Debugger
 				{
 					const new_val  = this.input_callback(); 
 					const old_val  = this.tape[this.pointer];
-					if(!Number.isInteger(new_val))
+					if(new_val === null)
 					{
-						throw "Debugger expected integer input(eg an ASCII value)";
+						// Effectively do nothing, not even move PC
+						// This is to allow controller.js to get input from user
+						return;
 					}
-					this.tape[this.pointer] = new_val;
-					token.value_stack.push(old_val);
+					else if(Number.isInteger(new_val))
+					{
+						this.tape[this.pointer] = new_val;
+						token.value_stack.push(old_val);
+					}
+					else
+					{
+						throw "Debugger expected integer input(eg an ASCII value) but got: "+new_val;
+					}
 				}
 				else
 				{

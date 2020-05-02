@@ -4,17 +4,48 @@ const PAUSE_BUTTON_TEXT = "Pause";
 const PLAY_BUTTON_TEXT = "Run";
 const MIN_CELLS = 50;
 const Mode = Object.freeze({
+	// User is editing code
 	"EDIT_MODE":1,
+	// Transitioning between modes
 	"TRANSITION_MODE":2,
+	// User is stepping
 	"DEBUG_MODE":3,
+	// User is running the program (not stepping)
 	"PLAY_MODE":4,
+	// Program is waiting for user input
+	"INPUT_MODE":5,
 });
 
 let mode = Mode.EDIT_MODE;
 let debug = new Debugger();
+// Highest_cell is used to determine
+// how many (DOM)cells we have already placed
+// on the (DOM)tape
 let highest_cell = -1;
+// Input buffer
+// User produces via terminal
+// BF program consumes
+let input_queue = []; 
+// Used to determine which state we switched
+// from when switching to Input Mode
+let last_state;
 
 
+function switchToInputMode()
+{
+	last_state = mode;
+	switchToDebugMode();
+	mode = Mode.INPUT_MODE;
+}
+function switchFromInputMode()
+{
+	if(last_state === Mode.PLAY_MODE)
+		play();
+	else if(last_state === Mode.DEBUG_MODE)
+		switchToDebugMode();
+	else
+		throw "Unknown mode we switched from"
+}
 function switchToPlayMode()
 {
 	switchToDebugMode();
@@ -35,11 +66,8 @@ function switchToEditMode()
 
 function switchToDebugMode()
 {
-	if(mode === Mode.DEBUG_MODE)
-	{
-		return;
-	}
-	if(mode === Mode.PLAY_MODE)
+	if([Mode.PLAY_MODE,Mode.DEBUG_MODE,Mode.INPUT_MODE].
+		includes(mode))
 	{
 		mode = Mode.DEBUG_MODE;
 		updateButtons();
@@ -160,8 +188,6 @@ function updateTape()
 }
 function step(reverse=false)
 {
-	let will_update_tape = false;
-	let next_token = null
 	debug.step(reverse);
 	updateHighlight();
 	updateTape();
@@ -169,6 +195,9 @@ function step(reverse=false)
 }
 
 
+function sleepmin(){
+  return new Promise(resolve => true);
+}
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -236,8 +265,59 @@ document.querySelector("#debug-view").addEventListener("click", ()=>{
 		switchToEditMode();
 });
 
+document.querySelector(".terminal").addEventListener("keydown", event=>{
+	const key = event.key;
+	console.log("input:"+key);
+	if(event.isComposing ||
+		event.keyCode === 229||
+		mode !== Mode.INPUT_MODE
+	)
+	{
+		return;
+	}
+
+	let character=key;
+
+	if (key === "Tab")
+		character="\t";
+	else if (key === "Space")
+		character=" ";
+	else if (key === "Enter")
+		character="\r";
+
+	// ' and / open up search
+	if("'/ ".includes(key))
+		event.preventDefault();
+
+	if(character.length === 1)
+	{
+		document.querySelector(".terminal").innerHTML+=character;
+		input_queue.push(character.charCodeAt(0));
+	}
+	if(key==="Enter" && mode === Mode.INPUT_MODE)
+		switchFromInputMode();
+});
+
 debug.output_callback=(val)=>{
 	document.querySelector(".terminal").innerHTML+=val;
+	console.log("output: "+val.charCodeAt(0));
 };
+
+function input_callback()
+{
+	// If val is null, Debugger does not step
+	let val = null;
+	if(input_queue.length > 0)
+	{
+		val = input_queue.shift();
+		console.log("val: "+val);
+	}
+	else
+	{
+		switchToInputMode();
+	}
+	return val;
+}
+debug.input_callback = input_callback;
 
 clearTape();
