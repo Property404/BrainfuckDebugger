@@ -94,10 +94,12 @@ html,body{
 	width:3rem;
 	height:2rem;
 	text-align:center;
-	vertical-align: middle;
 	border:2px solid;
 	border-color:#888;
 	background-color:#eee;
+	display: flex;
+	justify-content:center;
+	align-items:center;
 }
 .cell.active{
 	background-color:#333;

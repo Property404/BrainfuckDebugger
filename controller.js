@@ -44,7 +44,7 @@ function switchFromInputMode()
 	else if(last_state === Mode.DEBUG_MODE)
 		switchToDebugMode();
 	else
-		throw "Unknown mode we switched from"
+		throw "Unknown mode we switched from";
 }
 function switchToPlayMode()
 {
@@ -179,7 +179,7 @@ function updateTape()
 		if(val===undefined)val=0;
 
 		let current_cell = document.querySelector("#cell-"+pointer);
-		let old_cell = document.querySelector(".cell.active")
+		let old_cell = document.querySelector(".cell.active");
 		if(old_cell)
 			old_cell.classList.remove("active");
 		current_cell.innerHTML=val;
