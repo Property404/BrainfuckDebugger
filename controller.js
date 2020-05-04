@@ -37,8 +37,9 @@ let code_editor = CodeMirror(document.querySelector("#edit-panel-container"),
 		lineWrapping: true
 	}
 );
-console.dir(code_editor);
 
+/* For whatever reason, I decided to call states "Modes"
+ * Kinda a FSM */
 
 function switchToInputMode()
 {
@@ -83,16 +84,18 @@ function switchToDebugMode()
 		return;
 	}
 	mode = Mode.TRANSITION_MODE;
+
 	loadAndReset();
 	document.querySelector("#edit-panel-container").style.display="none";;
 	document.querySelector("#debug-panel-container").style.display="block";;
 
+	// Reset tape to beginning
+	let tape_container = document.querySelector(".tape-container");
+	tape_container.scrollLeft = 0;
+	
+
 	let debug_panel = document.querySelector("#debug-panel");
-
-	console.log(debug_panel.style.display);
-
 	debug_panel.innerHTML = code_editor.getValue();
-
 	updateHighlight();
 
 	mode = Mode.DEBUG_MODE;

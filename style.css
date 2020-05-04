@@ -106,6 +106,14 @@ html,body{
 	height:2rem;
 	width:100%;
 	margin: .2rem 0rem;
+	overflow-x:scroll;
+	scrollbar-width: none; /* Firefox */
+	-ms-overflow-style: none;  /* IE 10+ */
+}
+/* Disable scrollbar in Blink/Webkit */
+.tape-container::-webkit-scrollbar {
+	height: 0px;
+    background: transparent; 
 }
 .tape{
 	position:absolute;
