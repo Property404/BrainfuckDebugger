@@ -166,9 +166,10 @@ function clearTape()
 	updateTape();
 	for(let i=0;i<highest_cell;i++)
 	{
-		let cell = document.querySelector("#cell-"+i).innerHTML=0;
+		let cell = document.querySelector("#cell-"+i+" .cell-value").innerHTML=0;
 	}
 }
+
 function updateTape()
 {
 	let pointer = debug.pointer;
@@ -181,7 +182,7 @@ function updateTape()
 			let new_cell = template.cloneNode();
 			new_cell.removeAttribute("style");
 			new_cell.id="cell-"+i;
-			new_cell.innerHTML = "0";
+			new_cell.innerHTML = `<div class="cell-index">${i}</div><span class="cell-value">0</span>`;
 			document.querySelector(".tape").appendChild(new_cell);
 		}
 		highest_cell = desired_amount_of_cells;
@@ -195,7 +196,7 @@ function updateTape()
 		let old_cell = document.querySelector(".cell.active");
 		if(old_cell)
 			old_cell.classList.remove("active");
-		current_cell.innerHTML=val;
+		current_cell.querySelector(".cell-value").innerHTML=val;
 		current_cell.classList.add("active");
 	}
 }

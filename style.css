@@ -120,6 +120,7 @@ html,body{
 	display:flex;
 }
 .cell{
+	position:relative;
 	display:inline-block;
 	margin-left:.1rem;
 	width:3rem;
@@ -131,6 +132,13 @@ html,body{
 	display: flex;
 	justify-content:center;
 	align-items:center;
+}
+.cell-index{
+	position:absolute;
+	font-size:.5rem;
+	opacity:30%;
+	left:.1rem;
+	top:.1rem;
 }
 .cell.active{
 	background-color:#333;
