@@ -30,6 +30,15 @@ let input_queue = [];
 // from when switching to Input Mode
 let last_state;
 
+let code_editor = CodeMirror(document.querySelector("#edit-panel-container"),
+	{
+		mode: "brainfuck",
+		/*keyMap:"vim",*/
+		lineWrapping: true
+	}
+);
+console.dir(code_editor);
+
 
 function switchToInputMode()
 {
@@ -58,8 +67,8 @@ function switchToEditMode()
 	if(mode === Mode.EDIT_MODE)
 		return;
 	mode = Mode.TRANSITION_MODE;
-	document.querySelector("#editor-view").style.display = "block";
-	document.querySelector("#debug-view").style.display = "none";
+	document.querySelector("#edit-panel-container").style.display = "block";
+	document.querySelector("#debug-panel-container").style.display = "none";
 	mode = Mode.EDIT_MODE;
 	updateButtons();
 }
@@ -75,13 +84,14 @@ function switchToDebugMode()
 	}
 	mode = Mode.TRANSITION_MODE;
 	loadAndReset();
-	let textarea = document.querySelector("#editor-view");
-	let debug_view = document.querySelector("#debug-view");
+	document.querySelector("#edit-panel-container").style.display="none";;
+	document.querySelector("#debug-panel-container").style.display="block";;
 
-	textarea.style.display = "none";
-	debug_view.style.display = "block";
+	let debug_panel = document.querySelector("#debug-panel");
 
-	debug_view.innerHTML = textarea.value;
+	console.log(debug_panel.style.display);
+
+	debug_panel.innerHTML = code_editor.getValue();
 
 	updateHighlight();
 
@@ -91,7 +101,7 @@ function switchToDebugMode()
 
 function updateHighlight()
 {
-	let debug_view = document.querySelector("#debug-view");
+	let debug_panel = document.querySelector("#debug-panel");
 	const pos=debug.getPositionInSource();
 	const prechunk = debug.source.substring(0,pos);
 	const postchunk = debug.source.substring(pos+1);
@@ -101,9 +111,9 @@ function updateHighlight()
 	highlighted_char.innerHTML=debug.source.charAt(pos);
 	
 
-	debug_view.innerHTML=prechunk;
-	debug_view.appendChild(highlighted_char);
-	debug_view.innerHTML+=postchunk;
+	debug_panel.innerHTML=prechunk;
+	debug_panel.appendChild(highlighted_char);
+	debug_panel.innerHTML+=postchunk;
 }
 
 function updateButtons()
@@ -140,8 +150,8 @@ function updateButtons()
 
 function loadAndReset()
 {
-	let textarea = document.querySelector(".editor textarea");
-	const source = textarea.value;
+	const source = code_editor.getValue();
+	console.log(source);
 	/* This causes debug to reset, as well*/
 	debug.load(source);
 	updateButtons();
@@ -260,11 +270,18 @@ document.querySelector("#reset-button").addEventListener("click",()=> {
 	updateHighlight();
 });
 
-document.querySelector("#debug-view").addEventListener("click", ()=>{
+document.querySelector("#debug-panel").addEventListener("click", ()=>{
 	if(mode === Mode.DEBUG_MODE)
 		switchToEditMode();
 });
 
+function addCharacterToTerminal(ch)
+{
+	let term = document.querySelector(".terminal");
+	term.innerHTML+=ch;
+	term.scrollTop = term.scrollHeight;
+
+}
 document.querySelector(".terminal").addEventListener("keydown", event=>{
 	const key = event.key;
 	console.log("input:"+key);
@@ -291,17 +308,14 @@ document.querySelector(".terminal").addEventListener("keydown", event=>{
 
 	if(character.length === 1)
 	{
-		document.querySelector(".terminal").innerHTML+=character;
+		addCharacterToTerminal(character);
 		input_queue.push(character.charCodeAt(0));
 	}
 	if(key==="Enter" && mode === Mode.INPUT_MODE)
 		switchFromInputMode();
 });
 
-debug.output_callback=(val)=>{
-	document.querySelector(".terminal").innerHTML+=val;
-	console.log("output: "+val.charCodeAt(0));
-};
+debug.output_callback=addCharacterToTerminal;
 
 function input_callback()
 {

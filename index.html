@@ -4,6 +4,8 @@
 	<meta charset="UTF-8">
 	<title>Brainfuck Debugger</title>
 	<link rel="stylesheet" href="style.css">
+	<link rel="stylesheet" href="/node_modules/codemirror/lib/codemirror.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 </head>
 <body>
 	<div class="app">
@@ -14,18 +16,22 @@
 				<button id="playpause-button">Run</button>
 				<button id="step-forward-button">&gt;</button>
 			</nav>
-			<div class="tape-container">
+		</header>
+		<div class="tape-container">
 			<div class="tape">
 				<div class="cell" id="cell-template" style="display:none;">0</div>
 			</div>
-			</div>
-		</header>
-		<div class="editor">
-			<textarea id="editor-view">++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.</textarea>
-			<code id="debug-view"></code>
+		</div>
+		<div id="debug-panel-container">
+			<code id="debug-panel">yeah</code>
+		</div>
+		<div id="edit-panel-container">
 		</div>
 		<div class="terminal" tabindex="0"></div>
 	</div>
 	<script src="controller.js" type="module"></script>
+	<script src="/node_modules/codemirror/lib/codemirror.js"></script>
+	<script src="/node_modules/codemirror/mode/brainfuck/brainfuck.js"></script>
+	<script src="/node_modules/codemirror/keymap/vim.js"></script>
 </body>
 </html>
