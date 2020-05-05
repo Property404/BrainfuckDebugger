@@ -6,9 +6,6 @@
 	--button-hover-bg-color: rgb(204, 225, 240);
 	--button-hover-fg-color: rgb(44, 87, 119);
 	--button-hover-border-color: rgb(122, 167, 199);
-	--button-disabled-bg-color: #d5d5d5;
-	--button-disabled-fg-color: #ccc;
-	--button-disabled-border-color: #ccc;
 
 	--editor-normal-bg-color: #fff;
 	--editor-normal-fg-color: #000;
@@ -161,7 +158,7 @@ button{
 	cursor:pointer;
 }
 
-button:hover
+button:hover:not([disabled])
 {
 	background-color:var(--button-hover-bg-color);
 	color:var(--button-hover-fg-color);
@@ -170,9 +167,7 @@ button:hover
 
 button[disabled]
 {
-	background-color:var(--button-disabled-bg-color);
-	color:var(--button-disabled-fg-color);
-	border-color:var(--button-disabled-border-color);
+	opacity:30%;
 	cursor:initial;
 }
 
