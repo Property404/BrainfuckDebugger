@@ -189,7 +189,8 @@ export class Debugger
 		}
 		for (let token of this.tokens)
 		{
-			token.pass_stack = [];
+			if(token.pass_stack)
+				token.pass_stack.length = 0;
 			token.in_progress = false;
 		}
 	}
