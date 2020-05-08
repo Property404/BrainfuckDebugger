@@ -26,8 +26,8 @@ function tokenize(source, optimize=true)
 	let line_index = 0;
 	let token_index = 0;
 
-	let tokens = [];
-	let skip_stack = [];
+	const tokens = [];
+	const skip_stack = [];
 
 	for(let i=0;i<source.length;i++)
 	{
@@ -35,7 +35,7 @@ function tokenize(source, optimize=true)
 
 		if("+-<>[].,".includes(character))
 		{
-			let new_token = {type:null, value:1, start:i};
+			const new_token = {type:null, value:1, start:i};
 
 			new_token.character=character;
 			switch(character)
@@ -112,7 +112,7 @@ function tokenize(source, optimize=true)
 	tokens.push({type:TokenType.BF_END});
 
 	// Since we added a token at beginning, we have to shift now
-	for(let index in tokens)
+	for(const index in tokens)
 	{
 		if(tokens[index].partner)
 		{
@@ -144,7 +144,7 @@ export class Debugger
 
 	getPositionInSource()
 	{
-		let res = this.tokens[this.pc].start;
+		const res = this.tokens[this.pc].start;
 		if (res === undefined)
 			return -1;
 		return res;
@@ -183,11 +183,11 @@ export class Debugger
 	{
 		this.pc = 0;
 		this.pointer=0;
-		for(let i in this.tape)
+		for(const i in this.tape)
 		{
 			this.tape[i] = 0;
 		}
-		for (let token of this.tokens)
+		for (const token of this.tokens)
 		{
 			if(token.pass_stack)
 				token.pass_stack.length = 0;
@@ -273,8 +273,8 @@ export class Debugger
 			case TokenType.BF_OUTPUT:
 				if (!reverse)
 				{
-					let val = this.tape[this.pointer];
-					let ch = String.fromCharCode(val);
+					const val = this.tape[this.pointer];
+					const ch = String.fromCharCode(val);
 
 					this.output_callback(ch);
 				}

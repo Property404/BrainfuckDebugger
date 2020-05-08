@@ -23,7 +23,7 @@ function test(func)
 function codifyString(str)
 {
 	let output="";
-	for(let c of str)
+	for(const c of str)
 	{
 		if(c.charCodeAt(0) < 33)
 		{
@@ -65,10 +65,10 @@ const SOURCES = [
 ];
 
 function basic_validation_test(){
-	for(let source of SOURCES)
+	for(const source of SOURCES)
 	{
-		let debug = new Debugger(source.code);
-		for(let token of debug.tokens)
+		const debug = new Debugger(source.code);
+		for(const token of debug.tokens)
 		{
 			if (token.partner)
 			{
@@ -90,9 +90,9 @@ function basic_validation_test(){
 
 }
 function congruent_state_test(){
-	for(let source of SOURCES)
+	for(const source of SOURCES)
 	{
-		let debug = new Debugger(source.code);
+		const debug = new Debugger(source.code);
 
 		let output = "";
 		debug.output_callback = (val)=>{output+=val;};
@@ -131,8 +131,8 @@ function congruent_state_test(){
 }
 
 function rewind_test(){
-	let debug=new Debugger();
-	for(let source of SOURCES)
+	const debug=new Debugger();
+	for(const source of SOURCES)
 	{
 		let output="";
 		debug.load(source.code);
@@ -175,8 +175,8 @@ function rewind_test(){
 }
 
 function pinpoint_test(){
-	let code = ">++<.>>+>-[+]++>++>+++[>[->+++<<+++>]<<]";
-	let debug=new Debugger(code);
+	const code = ">++<.>>+>-[+]++>++>+++[>[->+++<<+++>]<<]";
+	const debug=new Debugger(code);
 
 	let i=0;
 	let initial_hash = debug.getStateHash();

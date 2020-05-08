@@ -17,7 +17,7 @@ const Mode = Object.freeze({
 });
 
 let mode = Mode.EDIT_MODE;
-let debug = new Debugger();
+const debug = new Debugger();
 // Highest_cell is used to determine
 // how many (DOM)cells we have already placed
 // on the (DOM)tape
@@ -25,12 +25,12 @@ let highest_cell = -1;
 // Input buffer
 // User produces via terminal
 // BF program consumes
-let input_queue = []; 
+const input_queue = []; 
 // Used to determine which state we switched
 // from when switching to Input Mode
 let last_state;
 
-let code_editor = CodeMirror(document.querySelector("#edit-panel-container"),
+const code_editor = CodeMirror(document.querySelector("#edit-panel-container"),
 	{
 		mode: "brainfuck",
 		/*keyMap:"vim",*/
@@ -90,11 +90,11 @@ function switchToDebugMode()
 	document.querySelector("#debug-panel-container").style.display="block";;
 
 	// Reset tape to beginning
-	let tape_container = document.querySelector(".tape-container");
+	const tape_container = document.querySelector(".tape-container");
 	tape_container.scrollLeft = 0;
 	
 
-	let debug_panel = document.querySelector("#debug-panel");
+	const debug_panel = document.querySelector("#debug-panel");
 	debug_panel.innerHTML = code_editor.getValue();
 	updateHighlight();
 
@@ -104,12 +104,12 @@ function switchToDebugMode()
 
 function updateHighlight()
 {
-	let debug_panel = document.querySelector("#debug-panel");
+	const debug_panel = document.querySelector("#debug-panel");
 	const pos=debug.getPositionInSource();
 	const prechunk = debug.source.substring(0,pos);
 	const postchunk = debug.source.substring(pos+1);
 
-	let highlighted_char = document.createElement("span");
+	const highlighted_char = document.createElement("span");
 	highlighted_char.classList.add("highlight");
 	highlighted_char.innerHTML=debug.source.charAt(pos);
 	
@@ -178,8 +178,8 @@ function updateTape()
 	{
 		for(let i=highest_cell+1;i<=desired_amount_of_cells;i++)
 		{
-			let template = document.querySelector("#cell-template");
-			let new_cell = template.cloneNode();
+			const template = document.querySelector("#cell-template");
+			const new_cell = template.cloneNode();
 			new_cell.removeAttribute("style");
 			new_cell.id="cell-"+i;
 			new_cell.innerHTML = `<div class="cell-index">${i}</div><span class="cell-value">0</span>`;
@@ -192,8 +192,8 @@ function updateTape()
 		let val = debug.tape[pointer];
 		if(val===undefined)val=0;
 
-		let current_cell = document.querySelector("#cell-"+pointer);
-		let old_cell = document.querySelector(".cell.active");
+		const current_cell = document.querySelector("#cell-"+pointer);
+		const old_cell = document.querySelector(".cell.active");
 		if(old_cell)
 			old_cell.classList.remove("active");
 		current_cell.querySelector(".cell-value").innerHTML=val;
@@ -218,7 +218,7 @@ function sleep(ms) {
 
 function displayStacks()
 {
-	for(let token of debug.tokens)
+	for(const token of debug.tokens)
 	{
 		if(token.character==='[')
 		{
@@ -281,7 +281,7 @@ document.querySelector("#debug-panel").addEventListener("click", ()=>{
 
 function addCharacterToTerminal(ch)
 {
-	let term = document.querySelector(".terminal");
+	const term = document.querySelector(".terminal");
 	term.innerHTML+=ch;
 	term.scrollTop = term.scrollHeight;
 
