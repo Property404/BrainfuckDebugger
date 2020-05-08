@@ -168,6 +168,7 @@ button:hover:not([disabled])
 button[disabled]
 {
 	opacity:30%;
+	background-color:transparent;
 	cursor:initial;
 }
 
