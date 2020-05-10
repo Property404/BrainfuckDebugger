@@ -121,6 +121,7 @@ body{
 	padding:.1rem 1rem;
 	width:100%;
 	text-align:left;
+	background-color:transparent;
 }
 .hamburger-menu li:hover
 {
