@@ -53,6 +53,30 @@ function updateSettings()
 	code_editor.setOption("mode", settings.get("editor-highlighting")?"brainfuck":null);
 	code_editor.setOption("keyMap",settings.get("editor-keymap").toLowerCase());
 	debug.cell_width = 2**settings.get("cell-width");
+
+	/* New Theme */
+	/* We probably have to dynamically import the CSS */
+	const theme = settings.get("editor-theme");
+	let need_to_import_css = true;
+	let href;
+	for(const link of document.querySelectorAll("link"))
+	{
+		if(!href&& link.href.includes("/lib/codemirror.css"))
+			href= link.href.replace("/lib/codemirror.css", "/theme/"+theme+".css");
+		if(link.href.includes(theme))
+		{
+			need_to_import_css = false;
+			break;
+		}
+	}
+	if(need_to_import_css)
+	{
+		const new_link = document.createElement("link");
+		new_link.href = href;
+		new_link.rel="stylesheet";
+		document.querySelector("head").appendChild(new_link);
+	}
+	code_editor.setOption("theme",theme);
 }
 
 /* For whatever reason, I decided to call states "Modes"

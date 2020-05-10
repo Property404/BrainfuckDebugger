@@ -26,6 +26,7 @@ export class Settings
 			[
 				new Option("editor-keymap", "default"),
 				new Option("editor-highlighting", true),
+				new Option("editor-theme", "default"),
 				new Option("cell-width", 8),
 			];
 		this.update_callback = update_callback;
