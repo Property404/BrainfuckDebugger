@@ -1,21 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>Brainfuck Debugger</title>
-	<link rel="stylesheet" href="style.css">
-	<link rel="stylesheet" href="/node_modules/codemirror/lib/codemirror.css">
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-</head>
-<body>
-	<div class="app">
+	<head>
+		<meta charset="UTF-8">
+		<title>Brainfuck Debugger</title>
+		<link rel="stylesheet" href="normalize.css">
+		<link rel="stylesheet" href="style.css">
+		<link rel="stylesheet" href="/node_modules/codemirror/lib/codemirror.css">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<script src="/node_modules/codemirror/lib/codemirror.js" defer></script>
+		<script src="/node_modules/codemirror/keymap/vim.js" defer></script>
+		<script src="/node_modules/codemirror/keymap/emacs.js" defer></script>
+		<script src="/node_modules/codemirror/mode/brainfuck/brainfuck.js" defer></script>
+		<script src="controller.js" type="module"></script>
+	</head>
+	<body>
+		<div class="settings-modal center-of-viewport modal" style="display:none;">
+			<nav class="modal-nav">
+				<ul>
+					<li>
+						<a href="#editor-settings">
+							 Editor
+						</a>
+					</li>
+					<li>
+						<a href="#debugger-settings">
+							Debugger
+						</a>
+					</li>
+				</ul>
+			</nav>
+			<div class="modal-topbar">
+				<span class="modal-title">Settings</span>
+				<button class="close-modal">X</button>
+			</div>
+			<div class="modal-main-view">
+				<form id="editor-settings">
+					<div class="option-group">
+						<label for="opt-editor-keymap">Keymap</label>
+						<select id="opt-editor-keymap">
+							<option value="default">Default</option>
+							<option value="vim">Vim</option>
+							<option value="emacs">Emacs</option>
+						</select>
+					</div>
+					<div class="option-group">
+					<label for="opt-editor-highlighting">Syntax Highlighting</label>
+					<input id="opt-editor-highlighting" type="checkbox">
+					</div>
+				</form>
+				<form id="debugger-settings">
+					<div class="option-group">
+						<label for="opt-cell-width">Cell Bit Width</label>
+						<input type="number" id="opt-cell-width" min="1" max="128">
+					</div>
+				</form>
+			</div>
+		</div>
 		<header class="header">
 			<nav class="toolbox">
-				<button id="reset-button">&lt;&lt;</button>
-				<button id="step-back-button">&lt;</button>
-				<button id="playpause-button">Run</button>
-				<button id="step-forward-button">&gt;</button>
+				<button class="debug-button" id="reset-button">&lt;&lt;</button>
+				<button class="debug-button" id="step-back-button">&lt;</button>
+				<button class="debug-button" id="playpause-button">Run</button>
+				<button class="debug-button" id="step-forward-button">&gt;</button>
 			</nav>
+			<div class="hamburger-container">
+				<div class='hamburger-button' role="button">
+					<div class="hamburger-line"></div>
+					<div class="hamburger-line"></div>
+					<div class="hamburger-line"></div>
+				</div>
+				<nav class='hamburger-menu modal'> 
+					<ul>
+						<li>
+							<button id="open-settings">Settings</button>
+						<li>
+							<a href="https://github.com/Property404/BrainfuckDebugger">Source Code</a>
+						</li>
+						<li>
+							<a href="https://dagans.dev">About Author</a>
+						</li>
+					</ul>
+				</nav>
+			</div>
 		</header>
 		<div class="tape-container">
 			<div class="tape">
@@ -31,10 +97,5 @@
 		<div id="edit-panel-container">
 		</div>
 		<div class="terminal" tabindex="0"></div>
-	</div>
-	<script src="controller.js" type="module"></script>
-	<script src="/node_modules/codemirror/lib/codemirror.js"></script>
-	<script src="/node_modules/codemirror/mode/brainfuck/brainfuck.js"></script>
-	<script src="/node_modules/codemirror/keymap/vim.js"></script>
-</body>
+	</body>
 </html>

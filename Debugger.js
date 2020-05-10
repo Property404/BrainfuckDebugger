@@ -1,5 +1,5 @@
 "use strict";
-const CELL_WIDTH = 256;
+const DEFAULT_CELL_WIDTH = 256;
 
 export const TokenType = Object.freeze({
 	// Standard Brainfuck commands
@@ -131,6 +131,8 @@ export class Debugger
 
 		this.output_callback = (val)=>{};
 		this.input_callback = ()=>{return 0;};
+		
+		this.cell_width = DEFAULT_CELL_WIDTH;
 	}
 
 	load(source){
@@ -234,9 +236,9 @@ export class Debugger
 				else
 					this.tape[this.pointer]+=token.value;
 
-				this.tape[this.pointer]%=CELL_WIDTH;
+				this.tape[this.pointer]%=this.cell_width;
 				if(this.tape[this.pointer] < 0)
-					this.tape[this.pointer] = CELL_WIDTH+this.tape[this.pointer];
+					this.tape[this.pointer] = this.cell_width+this.tape[this.pointer];
 				break;
 			case TokenType.BF_SHIFT:
 				if(reverse)

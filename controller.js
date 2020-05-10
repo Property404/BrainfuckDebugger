@@ -1,4 +1,5 @@
 import {TokenType,Debugger} from "./Debugger.js";
+import {Settings} from "./Settings.js";
 
 const PAUSE_BUTTON_TEXT = "Pause";
 const PLAY_BUTTON_TEXT = "Run";
@@ -16,8 +17,17 @@ const Mode = Object.freeze({
 	"INPUT_MODE":5,
 });
 
+// Common DOM elements
+const dom_elements=
+{
+	hamburger_menu : document.querySelector(".hamburger-menu"),
+	hamburger_button : document.querySelector(".hamburger-button"),
+	settings_modal : document.querySelector(".settings-modal"),
+};
+
 let mode = Mode.EDIT_MODE;
 const debug = new Debugger();
+const settings = new Settings(updateSettings);
 // Highest_cell is used to determine
 // how many (DOM)cells we have already placed
 // on the (DOM)tape
@@ -32,15 +42,21 @@ let last_state;
 
 const code_editor = CodeMirror(document.querySelector("#edit-panel-container"),
 	{
-		mode: "brainfuck",
-		/*keyMap:"vim",*/
-		lineWrapping: true
+		lineWrapping: true,
+		spellCheck:false
 	}
 );
 
+function updateSettings()
+{
+	console.log("Updating settings");
+	code_editor.setOption("mode", settings.get("editor-highlighting")?"brainfuck":null);
+	code_editor.setOption("keyMap",settings.get("editor-keymap").toLowerCase());
+	debug.cell_width = 2**settings.get("cell-width");
+}
+
 /* For whatever reason, I decided to call states "Modes"
  * Kinda a FSM */
-
 function switchToInputMode()
 {
 	last_state = mode;
@@ -86,8 +102,8 @@ function switchToDebugMode()
 	mode = Mode.TRANSITION_MODE;
 
 	loadAndReset();
-	document.querySelector("#edit-panel-container").style.display="none";;
-	document.querySelector("#debug-panel-container").style.display="block";;
+	document.querySelector("#edit-panel-container").style.display="none";
+	document.querySelector("#debug-panel-container").style.display="block";
 
 	// Reset tape to beginning
 	const tape_container = document.querySelector(".tape-container");
@@ -338,4 +354,26 @@ function input_callback()
 }
 debug.input_callback = input_callback;
 
+function closeModal()
+{
+	event.target.closest(".modal").style.display="none";
+	location.hash="";
+}
+document.querySelector(".close-modal").addEventListener("click",closeModal);
+dom_elements.hamburger_button.addEventListener("click", ()=>{
+	const menu = dom_elements.hamburger_menu;
+	if(menu.style.display === "block")
+		menu.style.display="none";
+	else
+		menu.style.display="block";
+});
+dom_elements.hamburger_menu.addEventListener("click", ()=> {
+		dom_elements.hamburger_menu.style.display="none";
+	});
+document.querySelector("#open-settings").addEventListener("click",()=>{
+	dom_elements.settings_modal.style.display=null;
+	location.hash="editor-settings";
+});
+
 clearTape();
+updateSettings();
