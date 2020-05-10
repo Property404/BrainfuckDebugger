@@ -84,6 +84,14 @@ body{
 	height:50%;
 	margin-right:.5rem;
 }
+.hamburger-button:hover
+{
+	cursor:pointer;
+}
+.hamburger-button:hover .hamburger-line
+{
+	background-color:var(--button-hover-fg-color);
+}
 .hamburger-line
 {
 	background-color:var(--button-normal-fg-color);
