@@ -48,7 +48,8 @@ let step_delay=0;
 const code_editor = CodeMirror(document.querySelector("#edit-panel-container"),
 	{
 		lineWrapping: true,
-		spellCheck:false
+		spellCheck:false,
+		value:localStorage["source"]||""
 	}
 );
 
@@ -189,6 +190,7 @@ function loadAndReset()
 
 	/* This causes debug to reset, as well*/
 	debug.load(source);
+	localStorage["source"] = source;
 
 	updateButtons();
 	clearTape();
