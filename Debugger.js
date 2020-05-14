@@ -135,13 +135,13 @@ export class Debugger
 
 		this.output_callback = (val)=>{};
 		this.input_callback = ()=>{return 0;};
-		
+		this.optimize=true;
 		this.cell_width = DEFAULT_CELL_WIDTH;
 	}
 
 	load(source){
 		this.source = source;
-		this.tokens = tokenize(source, true);
+		this.tokens = tokenize(source, this.optimize);
 		this.tape = {"0":0};
 		this.pc = 0; // Program pointer/counter
 		this.pointer = 0; // Data pointer

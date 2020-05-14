@@ -29,6 +29,8 @@ export class Settings
 				new Option("editor-theme", "default"),
 				new Option("global-theme", "dagan"),
 				new Option("cell-width", 8),
+				new Option("step-delay", 0),
+				new Option("optimize", true),
 			];
 		this.update_callback = update_callback;
 		this.options_map = {};

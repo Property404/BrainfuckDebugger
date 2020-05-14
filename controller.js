@@ -42,6 +42,8 @@ let last_state;
 // Last mark put down
 // (for highlighting during debugging)
 let mark;
+// The time we wait between steps when debugging
+let step_delay=0;
 
 const code_editor = CodeMirror(document.querySelector("#edit-panel-container"),
 	{
@@ -55,6 +57,8 @@ function updateSettings()
 	code_editor.setOption("mode", settings.get("editor-highlighting")?"brainfuck":null);
 	code_editor.setOption("keyMap",settings.get("editor-keymap").toLowerCase());
 	debug.cell_width = 2**settings.get("cell-width");
+	debug.optimize=settings.get("optimize");
+	step_delay=settings.get("step-delay");
 
 	/* New Theme */
 	const editor_theme = settings.get("editor-theme");
@@ -276,7 +280,7 @@ async function play(){
 	while(!debug.atEnd() && mode === Mode.PLAY_MODE)
 	{
 		step();
-		await sleep(0);
+		await sleep(step_delay);
 	}
 	updateButtons();
 	if(mode === Mode.PLAY_MODE)
