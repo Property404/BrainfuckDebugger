@@ -23,7 +23,8 @@ export const TokenType = Object.freeze({
 // See original source for helpful comments or lack thereof
 function tokenize(source, optimize=true)
 {
-	let line_index = 0;
+	let line_number = 0;
+	let column = 0;
 	let token_index = 0;
 
 	const tokens = [];
@@ -35,7 +36,7 @@ function tokenize(source, optimize=true)
 
 		if("+-<>[].,".includes(character))
 		{
-			const new_token = {type:null, value:1, start:i};
+			const new_token = {type:null, value:1, start:i, line:line_number, column: column};
 
 			new_token.character=character;
 			switch(character)
@@ -47,6 +48,7 @@ function tokenize(source, optimize=true)
 						new_token.type=TokenType.BF_ZERO;
 						new_token.value_stack = [];
 						i+=2;
+						column+=2;
 					}
 					else
 					{
@@ -103,10 +105,12 @@ function tokenize(source, optimize=true)
 				token_index++;
 			}
 		}
-		else if(character == "\n")
+		if(character === "\n")
 		{
-			line_index++;
+			line_number++;
+			column=-1;
 		}
+		column++;
 	}
 	tokens.unshift({type:TokenType.BF_START,value:0});
 	tokens.push({type:TokenType.BF_END});

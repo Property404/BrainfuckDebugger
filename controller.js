@@ -39,6 +39,9 @@ const input_queue = [];
 // Used to determine which state we switched
 // from when switching to Input Mode
 let last_state;
+// Last mark put down
+// (for highlighting during debugging)
+let mark;
 
 const code_editor = CodeMirror(document.querySelector("#edit-panel-container"),
 	{
@@ -49,7 +52,6 @@ const code_editor = CodeMirror(document.querySelector("#edit-panel-container"),
 
 function updateSettings()
 {
-	console.log("Updating settings");
 	code_editor.setOption("mode", settings.get("editor-highlighting")?"brainfuck":null);
 	code_editor.setOption("keyMap",settings.get("editor-keymap").toLowerCase());
 	debug.cell_width = 2**settings.get("cell-width");
@@ -108,8 +110,8 @@ function switchToEditMode()
 	if(mode === Mode.EDIT_MODE)
 		return;
 	mode = Mode.TRANSITION_MODE;
-	document.querySelector("#edit-panel-container").style.display = "block";
-	document.querySelector("#debug-panel-container").style.display = "none";
+	code_editor.setOption("readOnly", false);
+	mark.clear();
 	mode = Mode.EDIT_MODE;
 	updateButtons();
 }
@@ -126,16 +128,12 @@ function switchToDebugMode()
 	mode = Mode.TRANSITION_MODE;
 
 	loadAndReset();
-	document.querySelector("#edit-panel-container").style.display="none";
-	document.querySelector("#debug-panel-container").style.display="block";
+	code_editor.setOption("readOnly", true);
 
 	// Reset tape to beginning
 	const tape_container = document.querySelector(".tape-container");
 	tape_container.scrollLeft = 0;
 	
-
-	const debug_panel = document.querySelector("#debug-panel");
-	debug_panel.innerHTML = code_editor.getValue();
 	updateHighlight();
 
 	mode = Mode.DEBUG_MODE;
@@ -144,19 +142,23 @@ function switchToDebugMode()
 
 function updateHighlight()
 {
-	const debug_panel = document.querySelector("#debug-panel");
-	const pos=debug.getPositionInSource();
-	const prechunk = debug.source.substring(0,pos);
-	const postchunk = debug.source.substring(pos+1);
+	const pc=debug.pc;
+	const line = debug.tokens[pc].line;
+	const column = debug.tokens[pc].column;
 
-	const highlighted_char = document.createElement("span");
-	highlighted_char.classList.add("highlight");
-	highlighted_char.innerHTML=debug.source.charAt(pos);
-	
+	if(line!==undefined && column!==undefined)
+	{
+		const anchor = {line:line, ch:column};
+		const anchor2 = {line:anchor.line, ch:anchor.ch+1};
 
-	debug_panel.innerHTML=prechunk;
-	debug_panel.appendChild(highlighted_char);
-	debug_panel.innerHTML+=postchunk;
+		if (mark) mark.clear();
+		mark = code_editor.markText(anchor, anchor2, {
+			className: "highlight",
+			clearOnEnter: true
+		});
+		code_editor.scrollIntoView(anchor);
+	}
+
 }
 
 function updateButtons()
@@ -194,9 +196,10 @@ function updateButtons()
 function loadAndReset()
 {
 	const source = code_editor.getValue();
-	console.log(source);
+
 	/* This causes debug to reset, as well*/
 	debug.load(source);
+
 	updateButtons();
 	clearTape();
 }
@@ -212,8 +215,8 @@ function clearTape()
 
 function updateTape()
 {
-	let pointer = debug.pointer;
-	let desired_amount_of_cells = pointer>MIN_CELLS?pointer:MIN_CELLS;
+	const pointer = debug.pointer;
+	const desired_amount_of_cells = pointer>MIN_CELLS?pointer:MIN_CELLS;
 	if(desired_amount_of_cells > highest_cell)
 	{
 		for(let i=highest_cell+1;i<=desired_amount_of_cells;i++)
@@ -227,10 +230,10 @@ function updateTape()
 		}
 		highest_cell = desired_amount_of_cells;
 	}
-	if(pointer != undefined)
+
+	if(pointer !== undefined)
 	{
-		let val = debug.tape[pointer];
-		if(val===undefined)val=0;
+		const val = debug.tape[pointer]||0;
 
 		const current_cell = document.querySelector("#cell-"+pointer);
 		const old_cell = document.querySelector(".cell.active");
@@ -245,13 +248,9 @@ function step(reverse=false)
 	debug.step(reverse);
 	updateHighlight();
 	updateTape();
-	updateButtons();
 }
 
 
-function sleepmin(){
-  return new Promise(resolve => true);
-}
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -275,6 +274,7 @@ document.querySelector("#step-forward-button").addEventListener("click",()=> {
 	{
 		step(false);
 	}
+	updateButtons();
 });
 
 function pause()
@@ -292,6 +292,7 @@ async function play(){
 		step();
 		await sleep(0);
 	}
+	updateButtons();
 	if(mode === Mode.PLAY_MODE)
 	{
 		pause();
@@ -304,6 +305,7 @@ document.querySelector("#step-back-button").addEventListener("click",()=> {
 	{
 		step(true);
 	}
+	updateButtons();
 });
 
 document.querySelector("#playpause-button").addEventListener("click",play);
@@ -314,7 +316,7 @@ document.querySelector("#reset-button").addEventListener("click",()=> {
 	updateHighlight();
 });
 
-document.querySelector("#debug-panel").addEventListener("click", ()=>{
+document.querySelector("#edit-panel-container .CodeMirror").addEventListener("click",()=>{
 	if(mode === Mode.DEBUG_MODE)
 		switchToEditMode();
 });

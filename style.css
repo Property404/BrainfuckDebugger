@@ -216,6 +216,11 @@ body{
 {
 	display:block;
 }
+.highlight{
+	  border-bottom:.2rem solid currentColor;
+	  position:relative;
+	  bottom:1px;
+}
 
 
 #edit-panel-container
@@ -232,26 +237,6 @@ body{
 {
 	display:block;
 	bottom:0px;
-}
-
-#debug-panel-container
-{
-	display:none;
-	font-family:monospace;
-	position:relative;
-	overflow-y:scroll;
-	background-color:var(--editor-normal-bg-color);
-	color:var(--editor-normal-fg-color);
-}
-
-#debug-panel{
-	display:block;
-	padding:.2rem;
-	border-style: none;
-	width:100%;
-	min-height:100%;
-	white-space:pre-wrap;
-	word-wrap:break-word;
 }
 
 .terminal{
@@ -307,11 +292,6 @@ body{
 .cell.active{
 	background-color:#333;
 	color:#eee;
-}
-
-.highlight{
-	color:white;
-	background-color:black;
 }
 
 .debug-button{
