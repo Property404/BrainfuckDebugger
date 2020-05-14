@@ -1,53 +1,34 @@
-:root{
-	--bg-color: #d2d2dd;
-	--button-normal-bg-color: rgb(225, 236, 244);
-	--button-normal-fg-color: rgb(57, 115, 157);
-	--button-normal-border-color: rgb(122, 167, 199);
-	--button-hover-bg-color: rgb(204, 225, 240);
-	--button-hover-fg-color: rgb(44, 87, 119);
-	--button-hover-border-color: rgb(122, 167, 199);
-
-	--editor-normal-bg-color: #fff;
-	--editor-normal-fg-color: #000;
-	--editor-disabled-bg-color: #f4f4f4;
-	--editor-disabled-fg-color: #000;
-
-	--highlight-bg-color: var(--editor-normal-fg-color);
-	--highlight-fg-color: var(--editor-normal-bg-color);
-
-	--terminal-bg-color:black;
-	--terminal-fg-color:#00ff00;
-}
 *{
 	box-sizing:border-box;
 }
 
-html,body{
-	height:100%;
+body,html{
 	margin:0;
-	background-color: var(--bg-color);
-	font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
-	font-size: 1rem;
+	height:100%;
+	width:100%;
 }
 
 body{
+	font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+	font-size: 1rem;
 	display:grid;
-	height:100%;
-	width:100%;
+	background-color: var(--bg-color);
+	color: var(--fg-color);
 	grid-template-rows:min-content min-content auto min-content;
 	grid-template-areas:
 	"header"
 	"tape"
 	"editor"
-	"terminal";
+	"iobox";
 }
 
 .modal{
 	z-index:10;
 	min-width:5%;
 	min-height:5%;
-	border:.1rem solid var(--button-normal-border-color);
-	background-color:var(--button-normal-bg-color);
+	border:.1rem solid var(--modal-border-color);
+	color:var(--modal-fg-color);
+	background-color:var(--modal-bg-color);
 }
 
 .center-of-viewport
@@ -90,11 +71,11 @@ body{
 }
 .hamburger-button:hover .hamburger-line
 {
-	background-color:var(--button-hover-fg-color);
+	background-color:var(--hamburger-hover-color);
 }
 .hamburger-line
 {
-	background-color:var(--button-normal-fg-color);
+	background-color:var(--hamburger-color);
 	border-radius:20%;
 	width:100%;
 	height:20%;
@@ -107,6 +88,7 @@ body{
 	z-index:10;
 	top:101%;
 	right:1rem;
+	color:var(--modal-fg-color);
 }
 .hamburger-menu ul
 {
@@ -133,7 +115,8 @@ body{
 }
 .hamburger-menu li:hover
 {
-	background-color:lightblue;
+	color:var(--modal-hover-fg-color);
+	background-color:var(--modal-hover-bg-color);
 }
 
 .settings-modal
@@ -150,6 +133,7 @@ body{
 	justify-content: space-between;
 	align-items:start;
 	margin:0;
+	margin-bottom:.2rem;
 }
 .modal-title
 {
@@ -160,6 +144,7 @@ body{
 .close-modal
 {
 	background-color:transparent;
+	color:inherit;
 	border:none;
 	padding:0;
 	margin-right:.2rem;
@@ -167,7 +152,7 @@ body{
 }
 .modal-nav
 {
-	background-color:white;
+	border-right:inherit;
 	width:100%;
 	height:100%;
 	grid-row:span 2;
@@ -179,8 +164,8 @@ body{
 	display:block;
 	text-decoration:none;
 	color:inherit;
-	padding-right:1rem;
-	padding-left:1rem;
+	padding-right:.4rem;
+	padding-left:.4rem;
 }
 .modal-nav ul
 {
@@ -192,7 +177,8 @@ body{
 }
 .modal-nav li:hover
 {
-	background-color:lightblue;
+	background-color:var(--modal-hover-bg-color);
+	color:var(--modal-hover-fg-color);
 	cursor:pointer;
 }
 .modal-main-view
@@ -211,6 +197,7 @@ body{
 .modal-main-view form
 {
 	display:none;
+	text-align:center;
 }
 .modal-main-view form:target
 {
@@ -239,11 +226,11 @@ body{
 	bottom:0px;
 }
 
-.terminal{
-	background-color:var(--terminal-bg-color);
-	color:var(--terminal-fg-color);
+.iobox{
+	background-color:var(--iobox-bg-color);
+	color:var(--iobox-fg-color);
 	font-family:monospace;
-	grid-area:terminal;
+	grid-area:iobox;
 	white-space:pre-wrap;
 	word-wrap:break-word;
 	height:1.1rem;
@@ -277,29 +264,30 @@ body{
 	height:2rem;
 	text-align:center;
 	border:2px solid;
-	border-color:#888;
-	background-color:#eee;
+	border-color:var(--cell-border-color);
+	color:var(--cell-fg-color);
+	background-color:var(--cell-bg-color);
 	justify-content:center;
 	align-items:center;
 }
 .cell-index{
 	position:absolute;
 	font-size:.5rem;
-	opacity:30%;
+	opacity:90%;
 	left:.1rem;
 	top:.1rem;
 }
 .cell.active{
-	background-color:#333;
-	color:#eee;
+	background-color:var(--cell-active-bg-color);
+	color:var(--cell-active-fg-color);
 }
 
 .debug-button{
-	background-color:var(--button-normal-bg-color);
-	color:var(--button-normal-fg-color);
-	border-color:var(--button-normal-border-color);
+	background-color:var(--button-bg-color);
+	color:var(--button-fg-color);
+	border-color:var(--button-border-color);
 	margin:.05rem;
-	border-radius:30%;
+	border-radius:15%;
 	border:2px solid;
 	font-size: 1.7rem;
 	cursor:pointer;
@@ -319,24 +307,25 @@ body{
 	cursor:initial;
 }
 
+/* Mid-size */
+@media(min-width:25rem){
+	.settings-modal
+	{
+		width:85%;
+		height:85%;
+	}
+.modal-nav a
+{
+	padding-right:1rem;
+	padding-left:1rem;
 
-@media(min-width:510px){
+}
+}
+
+/* Desktop */
+@media(min-width:40rem){
 	body{
-	grid-template-areas:
-	"header header"
-	"tape tape"
-	"editor terminal";
-	grid-template-columns: 1fr 1fr;
-	grid-gap:.4rem;
-	}
-	.tape-container{
-		margin: 0;
-	}
-	.editor{
-		margin-left:.4rem;
-	}
-	.terminal{
-		height:auto;
+		grid-gap:.4rem;
 	}
 	.settings-modal
 	{

@@ -1,0 +1,39 @@
+:root{
+	--primary:#ffe0ff;
+	--secondary:rebeccapurple;
+	--tertiary:navy;
+
+
+	--bg-color: var(--secondary);
+	--fg-color: var(--primary);
+
+	--button-bg-color: var(--secondary);
+	--button-fg-color: var(--primary);
+	--button-border-color: var(--primary);
+	--button-hover-bg-color: var(--tertiary);
+	--button-hover-border-color: var(--primary);
+
+	--hamburger-color:var(--primary);
+	--hamburger-hover-color:silver;
+	--modal-bg-color:var(--secondary);
+	--modal-fg-color:var(--primary);
+	--modal-border-color:var(--primary);
+	--modal-hover-bg-color:var(--primary);
+	--modal-hover-fg-color:var(--secondary);
+	--modal-hover-border-color:var(--modal-border-color);
+
+	--cell-bg-color:var(--secondary);
+	--cell-border-color:var(--primary);
+	--cell-fg-color:var(--primary);
+
+	--cell-active-bg-color:var(--tertiary);
+	--cell-active-fg-color:var(--primary);
+	--cell-active-border-color:var(--cell-border-color);
+
+	--iobox-bg-color:var(--secondary);
+	--iobox-fg-color:var(--primary);
+}
+.debug-button{
+	box-shadow: 2px 2px var(--primary);
+	margin-right:.2rem!important;
+}

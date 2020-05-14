@@ -1,0 +1,33 @@
+:root{
+	--primary:#0f0;
+	--secondary:black;
+
+	--bg-color: var(--secondary);
+
+	--button-bg-color: var(--secondary);
+	--button-fg-color: var(--primary);
+	--button-border-color: var(--primary);
+	--button-hover-bg-color: var(--primary);
+	--button-hover-fg-color: var(--secondary);
+	--button-hover-border-color: var(--primary);
+
+	--hamburger-color:var(--primary);
+	--hamburger-hover-color:green;
+	--modal-bg-color:var(--secondary);
+	--modal-fg-color:var(--primary);
+	--modal-border-color:var(--primary);
+	--modal-hover-bg-color:var(--primary);
+	--modal-hover-fg-color:var(--secondary);
+	--modal-hover-border-color:var(--modal-border-color);
+
+	--cell-bg-color:var(--secondary);
+	--cell-border-color:var(--primary);
+	--cell-fg-color:var(--primary);
+
+	--cell-active-bg-color:var(--primary);
+	--cell-active-fg-color:var(--secondary);
+	--cell-active-border-color:var(--cell-border-color);
+
+	--iobox-bg-color:var(--secondary);
+	--iobox-fg-color:var(--primary);
+}

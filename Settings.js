@@ -27,6 +27,7 @@ export class Settings
 				new Option("editor-keymap", "default"),
 				new Option("editor-highlighting", true),
 				new Option("editor-theme", "default"),
+				new Option("global-theme", "dagan"),
 				new Option("cell-width", 8),
 			];
 		this.update_callback = update_callback;
@@ -95,6 +96,9 @@ export class Settings
 
 	get(option_name)
 	{
-		return this.options_map[option_name].value;
+		if(this.options_map[option_name])
+			return this.options_map[option_name].value;
+		else
+			console.log("No such option: "+option_name);
 	}
 }

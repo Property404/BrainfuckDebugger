@@ -33,7 +33,7 @@ const settings = new Settings(updateSettings);
 // on the (DOM)tape
 let highest_cell = -1;
 // Input buffer
-// User produces via terminal
+// User produces via iobox
 // BF program consumes
 const input_queue = []; 
 // Used to determine which state we switched
@@ -57,28 +57,14 @@ function updateSettings()
 	debug.cell_width = 2**settings.get("cell-width");
 
 	/* New Theme */
-	/* We probably have to dynamically import the CSS */
-	const theme = settings.get("editor-theme");
-	let need_to_import_css = true;
-	let href;
-	for(const link of document.querySelectorAll("link"))
-	{
-		if(!href&& link.href.includes("/lib/codemirror.css"))
-			href= link.href.replace("/lib/codemirror.css", "/theme/"+theme+".css");
-		if(link.href.includes(theme))
-		{
-			need_to_import_css = false;
-			break;
-		}
-	}
-	if(need_to_import_css)
-	{
-		const new_link = document.createElement("link");
-		new_link.href = href;
-		new_link.rel="stylesheet";
-		document.querySelector("head").appendChild(new_link);
-	}
-	code_editor.setOption("theme",theme);
+	const editor_theme = settings.get("editor-theme");
+	const global_theme = settings.get("global-theme");
+
+	document.querySelector("#global-theme").href="themes/"+global_theme+".css";
+	(a=>a.href=a.href.replace(/theme\/.*.css/, "theme/"+editor_theme+".css"))(
+		document.querySelector("#editor-theme")
+	);
+	code_editor.setOption("theme",editor_theme);
 }
 
 /* For whatever reason, I decided to call states "Modes"
@@ -323,12 +309,12 @@ document.querySelector("#edit-panel-container .CodeMirror").addEventListener("cl
 
 function addCharacterToTerminal(ch)
 {
-	const term = document.querySelector(".terminal");
+	const term = document.querySelector(".iobox");
 	term.innerHTML+=ch;
 	term.scrollTop = term.scrollHeight;
 
 }
-document.querySelector(".terminal").addEventListener("keydown", event=>{
+document.querySelector(".iobox").addEventListener("keydown", event=>{
 	const key = event.key;
 	console.log("input:"+key);
 	if(event.isComposing ||
@@ -398,7 +384,7 @@ dom_elements.hamburger_menu.addEventListener("click", ()=> {
 	});
 document.querySelector("#open-settings").addEventListener("click",()=>{
 	dom_elements.settings_modal.style.display=null;
-	location.hash="editor-settings";
+	location.hash="appearance-settings";
 });
 
 clearTape();

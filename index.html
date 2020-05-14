@@ -4,9 +4,11 @@
 		<meta charset="UTF-8">
 		<title>Brainfuck Debugger</title>
 		<link rel="stylesheet" href="thirdparty/normalize.min.css">
+		<link id="global-theme" rel="stylesheet" href="themes/dagan.css">
 		<link rel="stylesheet" href="node_modules/codemirror-minified/lib/codemirror.css">
 		<link rel="stylesheet" href="style.css">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<link id="editor-theme" rel="stylesheet" href="node_modules/codemirror-minified/theme/monokai.css">
 		<script src="node_modules/codemirror-minified/lib/codemirror.js" defer></script>
 		<script src="node_modules/codemirror-minified/keymap/vim.js" defer></script>
 		<script src="node_modules/codemirror-minified/keymap/emacs.js" defer></script>
@@ -17,6 +19,11 @@
 		<div class="settings-modal center-of-viewport modal" style="display:none;">
 			<nav class="modal-nav">
 				<ul>
+					<li>
+						<a href="#appearance-settings">
+							 Appearance
+						</a>
+					</li>
 					<li>
 						<a href="#editor-settings">
 							 Editor
@@ -34,21 +41,17 @@
 				<button class="close-modal">X</button>
 			</div>
 			<div class="modal-main-view">
-				<form id="editor-settings">
+				<form id="appearance-settings">
 					<div class="option-group">
-						<label for="opt-editor-keymap">Keymap</label>
-						<select id="opt-editor-keymap">
-							<option value="default">Default</option>
-							<option value="vim">Vim</option>
-							<option value="emacs">Emacs</option>
+						<label for="opt-global-theme">UI Theme</label>
+						<select id="opt-global-theme">
+							<option value="dagan">Dagan</option>
+							<option value="rebecca">Rebecca</option>
+							<option value="haxzer">Haxzer</option>
 						</select>
 					</div>
 					<div class="option-group">
-						<label for="opt-editor-highlighting">Syntax Highlighting</label>
-						<input id="opt-editor-highlighting" type="checkbox">
-					</div>
-					<div class="option-group">
-						<label for="opt-editor-theme">Theme</label>
+						<label for="opt-editor-theme">Editor Theme</label>
 						<select id="opt-editor-theme">
 							<option value="default">Default</option>
 							<option value="3024-day">3024 Day</option>
@@ -117,6 +120,20 @@
 						</select>
 					</div>
 				</form>
+				<form id="editor-settings">
+					<div class="option-group">
+						<label for="opt-editor-keymap">Keymap</label>
+						<select id="opt-editor-keymap">
+							<option value="default">Default</option>
+							<option value="vim">Vim</option>
+							<option value="emacs">Emacs</option>
+						</select>
+					</div>
+					<div class="option-group">
+						<label for="opt-editor-highlighting">Syntax Highlighting</label>
+						<input id="opt-editor-highlighting" type="checkbox">
+					</div>
+				</form>
 				<form id="debugger-settings">
 					<div class="option-group">
 						<label for="opt-cell-width">Cell Bit Width</label>
@@ -162,6 +179,6 @@
 		</div>
 		<div id="edit-panel-container">
 		</div>
-		<div class="terminal" tabindex="0"></div>
+		<div class="iobox" tabindex="0"></div>
 	</body>
 </html>
