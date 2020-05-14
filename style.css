@@ -314,19 +314,15 @@ body{
 		width:85%;
 		height:85%;
 	}
-.modal-nav a
-{
-	padding-right:1rem;
-	padding-left:1rem;
-
-}
+	.modal-nav a
+	{
+		padding-right:1rem;
+		padding-left:1rem;
+	}
 }
 
 /* Desktop */
 @media(min-width:40rem){
-	body{
-		grid-gap:.4rem;
-	}
 	.settings-modal
 	{
 		width:55%;
