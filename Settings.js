@@ -46,7 +46,7 @@ export class Settings
 			[
 				new Option("editor-keymap", "default"),
 				new Option("editor-highlighting", true),
-				new Option("editor-theme", "default"),
+				new Option("editor-theme", "monokai"),
 				new Option("global-theme", "dagan"),
 				new Option("cell-width", 8),
 				new Option("step-delay", 1),
