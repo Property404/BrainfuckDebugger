@@ -250,10 +250,11 @@ function step(reverse=false)
 	}catch(e)
 	{
 		raiseError(e);
-		return;
+		return false;
 	}
 	updateHighlight();
 	updateTape();
+	return true;
 }
 
 
