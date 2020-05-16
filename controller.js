@@ -22,7 +22,7 @@ const dom_elements=
 {
 	hamburger_menu : document.querySelector(".hamburger-menu"),
 	hamburger_button : document.querySelector(".hamburger-button"),
-	settings_modal : document.querySelector(".settings-modal"),
+	settings_modal : document.querySelector("#settings-modal"),
 };
 
 let mode = Mode.EDIT_MODE;
@@ -394,7 +394,8 @@ debug.input_callback = input_callback;
 
 function closeModal()
 {
-	event.target.closest(".modal").setAttribute("hidden",true);
+	const modal = event.target.closest(".modal");
+	modal.setAttribute("hidden",true);
 	location.hash="";
 }
 document.querySelectorAll(".close-modal").forEach(target=>target.
