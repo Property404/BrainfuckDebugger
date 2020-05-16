@@ -5,6 +5,11 @@
 	display:none !important;
 }
 
+.monochrome-emoji{
+	text-shadow: 0 0 0 red;
+	color: transparent;  
+}
+
 body,html{
 	margin:0;
 	height:100%;
@@ -93,6 +98,9 @@ body{
 	right:1rem;
 	color:var(--modal-fg-color);
 }
+.hamburger-menu .monochrome-emoji{
+	text-shadow: 0 0 0 var(--modal-fg-color);
+}
 .hamburger-menu ul
 {
 	margin:auto;
@@ -120,6 +128,9 @@ body{
 {
 	color:var(--modal-hover-fg-color);
 	background-color:var(--modal-hover-bg-color);
+}
+.hamburger-menu li:hover .monochrome-emoji{
+	text-shadow: 0 0 0 var(--modal-hover-fg-color);
 }
 
 #settings-modal
@@ -231,7 +242,7 @@ body{
 	bottom:0px;
 }
 
-.iobox{
+#iobox{
 	background-color:var(--iobox-bg-color);
 	color:var(--iobox-fg-color);
 	font-family:monospace;
@@ -241,7 +252,7 @@ body{
 	height:1.1rem;
 	overflow-y:scroll;
 }
-.tape-container{
+#tape-container{
 	grid-area: tape;
 	position:relative;
 	overflow:hidden;
@@ -253,7 +264,7 @@ body{
 	-ms-overflow-style: none;  /* IE 10+ */
 }
 /* Disable scrollbar in Blink/Webkit */
-.tape-container::-webkit-scrollbar {
+#tape-container::-webkit-scrollbar {
 	height: 0px;
     background: transparent; 
 }

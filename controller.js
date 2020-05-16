@@ -123,7 +123,7 @@ function switchToDebugMode()
 	code_editor.setOption("readOnly", true);
 
 	// Reset tape to beginning
-	const tape_container = document.querySelector(".tape-container");
+	const tape_container = document.getElementById("tape-container");
 	tape_container.scrollLeft = 0;
 	
 	updateHighlight();
@@ -359,12 +359,12 @@ document.querySelector("#edit-panel-container .CodeMirror").addEventListener("cl
 
 function addCharacterToTerminal(ch)
 {
-	const term = document.querySelector(".iobox");
+	const term = document.querySelector("#iobox");
 	term.textContent+=ch;
 	term.scrollTop = term.scrollHeight;
 
 }
-document.querySelector(".iobox").addEventListener("keydown", event=>{
+document.querySelector("#iobox").addEventListener("keydown", event=>{
 	const key = event.key;
 	console.log("input:"+key);
 	if(event.isComposing ||
@@ -439,9 +439,12 @@ dom_elements.hamburger_button.addEventListener("click", ()=>{
 dom_elements.hamburger_menu.addEventListener("click", ()=> {
 		dom_elements.hamburger_menu.setAttribute("hidden", true);
 	});
-document.querySelector("#open-settings").addEventListener("click",()=>{
+document.getElementById("open-settings").addEventListener("click",()=>{
 	dom_elements.settings_modal.removeAttribute("hidden");
 	location.hash="appearance-settings";
+});
+document.getElementById("clear-iobox").addEventListener("click",()=>{
+	document.getElementById("iobox").textContent="";
 });
 
 clearTape();

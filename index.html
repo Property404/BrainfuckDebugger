@@ -181,18 +181,28 @@
 				<nav class='hamburger-menu modal' hidden> 
 					<ul>
 						<li>
-							<button id="open-settings">Settings</button>
-						<li>
-							<a target="_blank" rel="noopener noreferrer" href="https://github.com/Property404/BrainfuckDebugger">Source Code</a>
+							<button id="open-settings">
+								Settings
+							</button>
 						</li>
 						<li>
-							<a target="_blank" rel="noopener noreferrer" href="https://dagans.dev">About Author</a>
+							<button id="clear-iobox">Clear Output</button>
+						</li>
+						<li>
+							<a target="_blank" rel="noopener noreferrer" href="https://github.com/Property404/BrainfuckDebugger">
+								Source Code<span class="monochrome-emoji">🔗</span>
+							</a>
+						</li>
+						<li>
+							<a target="_blank" rel="noopener noreferrer" href="https://dagans.dev">
+								About Author<span class="monochrome-emoji">🔗</span>
+							</a>
 						</li>
 					</ul>
 				</nav>
 			</div>
 		</header>
-		<div class="tape-container">
+		<div id="tape-container">
 			<div id="tape">
 				<div class="cell" id="cell-template" hidden>
 					<div class="cell-index">N/A</div>
@@ -202,6 +212,6 @@
 		</div>
 		<div id="edit-panel-container">
 		</div>
-		<div class="iobox" tabindex="0"></div>
+		<div id="iobox" tabindex="0"></div>
 	</body>
 </html>
