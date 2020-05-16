@@ -1,5 +1,5 @@
 import {TokenType,Debugger} from "./Debugger.js";
-import {Settings} from "./Settings.js";
+import {accessLocalStorage, putLocalStorage, Settings} from "./Settings.js";
 
 const PAUSE_BUTTON_TEXT = "Pause";
 const PLAY_BUTTON_TEXT = "Run";
@@ -49,7 +49,7 @@ const code_editor = CodeMirror(document.querySelector("#edit-panel-container"),
 	{
 		lineWrapping: true,
 		spellCheck:false,
-		value:localStorage["source"]||"",
+		value:accessLocalStorage("source")||"",
 	}
 );
 
@@ -198,7 +198,7 @@ function loadAndReset()
 		switchToEditMode();
 		return;
 	}
-	localStorage["source"] = source;
+	putLocalStorage("source", source);
 
 	updateButtons();
 	clearTape();

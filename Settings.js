@@ -1,14 +1,34 @@
+// let's still be functional even if storage is disabled
+let fauxStorage={};
+export function putLocalStorage(key, value)
+{
+	try{
+		localStorage[key] = value;
+	}catch(e){
+		fauxStorage[key] = value;
+	}
+}
+export function accessLocalStorage(key)
+{
+	let val;
+	try{
+		val = localStorage[key];
+	}catch(e){
+		val = fauxStorage[key];
+	}
+	return val;
+}
 function Option(name,default_value){
 	this.name = name;
 	this.default_value=default_value;
-	if(localStorage[name] === undefined)
+	if(accessLocalStorage(name) === undefined)
 	{
 		this.value = default_value;
-		localStorage.setItem(name,default_value);
+		putLocalStorage(name, default_value);
 	}
 	else
 	{
-		let val = localStorage[name];
+		let val = accessLocalStorage(name);
 		if(val === "true")
 			val = true;
 		if(val === "false")
@@ -58,7 +78,7 @@ export class Settings
 			if(value !== undefined)
 			{
 				this.options_map[option_name].value = value;
-				localStorage[option_name] = value;
+				putLocalStorage(option_name, value);
 			}
 			this.update_callback();
 		};
