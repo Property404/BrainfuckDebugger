@@ -257,7 +257,7 @@ body{
 	height: 0px;
     background: transparent; 
 }
-.tape{
+#tape{
 	position:absolute;
 	display:flex;
 }

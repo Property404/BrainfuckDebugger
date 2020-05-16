@@ -49,7 +49,7 @@ const code_editor = CodeMirror(document.querySelector("#edit-panel-container"),
 	{
 		lineWrapping: true,
 		spellCheck:false,
-		value:localStorage["source"]||""
+		value:localStorage["source"]||"",
 	}
 );
 
@@ -215,18 +215,21 @@ function clearTape()
 
 function updateTape()
 {
+	const tape = document.getElementById("tape");
 	const pointer = debug.pointer;
 	const desired_amount_of_cells = pointer>MIN_CELLS?pointer:MIN_CELLS;
+
 	if(desired_amount_of_cells > highest_cell)
 	{
+		const template = tape.querySelector("#cell-template");
 		for(let i=highest_cell+1;i<=desired_amount_of_cells;i++)
 		{
-			const template = document.querySelector("#cell-template");
-			const new_cell = template.cloneNode();
-			new_cell.removeAttribute("style");
+			const new_cell = template.cloneNode(true);
+			new_cell.removeAttribute("hidden");
 			new_cell.id="cell-"+i;
-			new_cell.innerHTML = `<div class="cell-index">${i}</div><span class="cell-value">0</span>`;
-			document.querySelector(".tape").appendChild(new_cell);
+			new_cell.querySelector(".cell-index").textContent=i;
+			new_cell.querySelector(".cell-value").textContent="0";
+			tape.appendChild(new_cell);
 		}
 		highest_cell = desired_amount_of_cells;
 	}
@@ -234,16 +237,16 @@ function updateTape()
 	if(pointer !== undefined)
 	{
 		const val = debug.tape[pointer]||0;
+		const current_cell = tape.querySelector("#cell-"+pointer||0);
 
-		const current_cell = document.querySelector("#cell-"+pointer);
-		const old_cell = document.querySelector(".cell.active");
+		const old_cell = tape.querySelector(".active");
 		if(old_cell)
 			old_cell.classList.remove("active");
-		current_cell.querySelector(".cell-value").innerHTML=val;
+		current_cell.querySelector(".cell-value").textContent=val;
 		current_cell.classList.add("active");
 	}
 }
-function step(reverse=false)
+function step(reverse=false, update=true)
 {
 	try{
 		debug.step(reverse);
@@ -252,8 +255,11 @@ function step(reverse=false)
 		raiseError(e);
 		return false;
 	}
-	updateHighlight();
-	updateTape();
+	if(update)
+	{
+		updateHighlight();
+		updateTape();
+	}
 	return true;
 }
 
@@ -294,10 +300,33 @@ async function play(){
 	switchToPlayMode();
 	document.querySelector("#playpause-button").removeEventListener("click",play);
 	document.querySelector("#playpause-button").addEventListener("click",pause);
+	let counter=0;
 	while(!debug.atEnd() && mode === Mode.PLAY_MODE)
 	{
-		if(!step())break;;
-		await sleep(step_delay);
+		/*
+		 * step_delay === 0 is super speed mode
+		 * Only stopping occasionally
+		 * or for input or output
+		 */
+		if(
+			step_delay>0||
+			(!(counter%1000)) ||
+			[
+				TokenType.BF_OUTPUT,
+				TokenType.BF_INPUT,
+				TokenType.BF_START,
+				TokenType.BF_END
+			].includes(debug.tokens[debug.pc].type)
+		)
+		{
+			if(!step())break;
+			await sleep(step_delay?step_delay-1:0);
+		}
+		else
+		{
+			if(!step(false, false))break;;
+		}
+		counter++;
 	}
 	updateButtons();
 	if(mode === Mode.PLAY_MODE)
@@ -331,7 +360,7 @@ document.querySelector("#edit-panel-container .CodeMirror").addEventListener("cl
 function addCharacterToTerminal(ch)
 {
 	const term = document.querySelector(".iobox");
-	term.innerHTML+=ch;
+	term.textContent+=ch;
 	term.scrollTop = term.scrollHeight;
 
 }

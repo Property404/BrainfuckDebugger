@@ -29,7 +29,7 @@ export class Settings
 				new Option("editor-theme", "default"),
 				new Option("global-theme", "dagan"),
 				new Option("cell-width", 8),
-				new Option("step-delay", 0),
+				new Option("step-delay", 1),
 				new Option("optimize", true),
 				new Option("line-numbers", true),
 			];

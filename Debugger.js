@@ -3,20 +3,20 @@ const DEFAULT_CELL_WIDTH = 256;
 
 export const TokenType = Object.freeze({
 	// Standard Brainfuck commands
-	"BF_LOOP_OPEN":1,
+	"BF_LOOP_OPEN": 1,
 	"BF_LOOP_CLOSE":2,
-	"BF_ADD":3,
-	"BF_SHIFT":4,
-	"BF_OUTPUT":5,
-	"BF_INPUT":6,
+	"BF_ADD": 3,
+	"BF_SHIFT": 4,
+	"BF_OUTPUT": 5,
+	"BF_INPUT": 6,
 
 	// Represents a [-] like construct
 	// Automatically brings the value the pointer is pointing to to zero
-	"BF_ZERO":7,
+	"BF_ZERO": 7,
 
 	// Cushioning for the beginning and end of the token array
-	"BF_START":8,
-	"BF_END":9
+	"BF_START": 8,
+	"BF_END": 9,
 });
 
 // Adapted from Property404/dbfi/src/interpret.c
