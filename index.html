@@ -16,7 +16,18 @@
 		<script src="controller.js" type="module"></script>
 	</head>
 	<body>
-		<div class="settings-modal center-of-viewport modal" style="display:none;">
+		<div id="error-modal" class="center-of-viewport modal" hidden>
+			<div class="modal-topbar">
+				<span class="modal-title">Error</span>
+				<button class="close-modal">X</button>
+			</div>
+			<div class="modal-main-view">
+				<span id="error-message">
+					You look really nice today. Your shirt goes really well with your eyes.
+				</span>
+			</div>
+		</div>
+		<div class="settings-modal center-of-viewport modal" hidden>
 			<nav class="modal-nav">
 				<ul>
 					<li>
@@ -163,7 +174,7 @@
 					<div class="hamburger-line"></div>
 					<div class="hamburger-line"></div>
 				</div>
-				<nav class='hamburger-menu modal'> 
+				<nav class='hamburger-menu modal' hidden> 
 					<ul>
 						<li>
 							<button id="open-settings">Settings</button>

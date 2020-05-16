@@ -30,6 +30,9 @@ body{
 	color:var(--modal-fg-color);
 	background-color:var(--modal-bg-color);
 }
+.modal[hidden]{
+	display:none;
+}
 
 .center-of-viewport
 {
@@ -82,7 +85,7 @@ body{
 	left:0;
 }
 .hamburger-menu{
-	display:none;
+	display:block;
 	position:absolute;
 	opacity:97%;
 	z-index:10;
@@ -187,7 +190,9 @@ body{
 	width:100%;
 	display:flex;
 	justify-content:center;
+	text-align:center;
 	overflow:auto;
+	padding-bottom:.5rem;
 }
 .modal-main-view .option-group
 {

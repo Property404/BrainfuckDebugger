@@ -65,6 +65,12 @@ function tokenize(source, optimize=true)
 					new_token.type = TokenType.BF_LOOP_CLOSE;
 					// [ and ] need to be mated
 					new_token.partner = skip_stack.pop();
+					if(
+						new_token.partner === undefined
+					)
+					{
+						throw(`Unmatched ']' at line ${line_number} column ${column}`);
+					}
 					tokens[new_token.partner].partner = token_index;
 					break;
 
@@ -249,6 +255,8 @@ export class Debugger
 					this.pointer-=token.value;
 				else
 					this.pointer+=token.value;
+				if(this.pointer<0)
+					throw(`Pointer out of bounds(pointer=${this.pointer}) at line ${token.line} column ${token.column}`)
 				break;
 			case TokenType.BF_INPUT:
 				if(!reverse)

@@ -102,7 +102,7 @@ function switchToEditMode()
 		return;
 	mode = Mode.TRANSITION_MODE;
 	code_editor.setOption("readOnly", false);
-	mark.clear();
+	if(mark)mark.clear();
 	mode = Mode.EDIT_MODE;
 	updateButtons();
 }
@@ -189,7 +189,14 @@ function loadAndReset()
 	const source = code_editor.getValue();
 
 	/* This causes debug to reset, as well*/
+	try{
 	debug.load(source);
+	}catch(e){
+		console.dir(e);
+		raiseError(e);
+		switchToEditMode();
+		return;
+	}
 	localStorage["source"] = source;
 
 	updateButtons();
@@ -237,7 +244,13 @@ function updateTape()
 }
 function step(reverse=false)
 {
-	debug.step(reverse);
+	try{
+		debug.step(reverse);
+	}catch(e)
+	{
+		raiseError(e);
+		return;
+	}
 	updateHighlight();
 	updateTape();
 }
@@ -281,7 +294,7 @@ async function play(){
 	document.querySelector("#playpause-button").addEventListener("click",pause);
 	while(!debug.atEnd() && mode === Mode.PLAY_MODE)
 	{
-		step();
+		if(!step())break;;
 		await sleep(step_delay);
 	}
 	updateButtons();
@@ -355,6 +368,13 @@ document.querySelector(".iobox").addEventListener("keydown", event=>{
 
 debug.output_callback=addCharacterToTerminal;
 
+function raiseError(message)
+{
+	const modal = document.querySelector("#error-modal");
+	modal.querySelector("#error-message").textContent = message;
+	modal.removeAttribute("hidden");
+}
+
 function input_callback()
 {
 	// If val is null, Debugger does not step
@@ -374,22 +394,21 @@ debug.input_callback = input_callback;
 
 function closeModal()
 {
-	event.target.closest(".modal").style.display="none";
+	event.target.closest(".modal").setAttribute("hidden",true);
 	location.hash="";
 }
-document.querySelector(".close-modal").addEventListener("click",closeModal);
+document.querySelectorAll(".close-modal").forEach(target=>target.
+	addEventListener("click",closeModal)
+);
 dom_elements.hamburger_button.addEventListener("click", ()=>{
 	const menu = dom_elements.hamburger_menu;
-	if(menu.style.display === "block")
-		menu.style.display="none";
-	else
-		menu.style.display="block";
+	menu.toggleAttribute("hidden");
 });
 dom_elements.hamburger_menu.addEventListener("click", ()=> {
-		dom_elements.hamburger_menu.style.display="none";
+		dom_elements.hamburger_menu.setAttribute("hidden", true);
 	});
 document.querySelector("#open-settings").addEventListener("click",()=>{
-	dom_elements.settings_modal.style.display=null;
+	dom_elements.settings_modal.removeAttribute("hidden");
 	location.hash="appearance-settings";
 });
 
