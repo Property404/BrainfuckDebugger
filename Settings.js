@@ -31,6 +31,7 @@ export class Settings
 				new Option("cell-width", 8),
 				new Option("step-delay", 0),
 				new Option("optimize", true),
+				new Option("line-numbers", true),
 			];
 		this.update_callback = update_callback;
 		this.options_map = {};

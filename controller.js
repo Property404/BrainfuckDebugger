@@ -57,6 +57,7 @@ function updateSettings()
 {
 	code_editor.setOption("mode", settings.get("editor-highlighting")?"brainfuck":null);
 	code_editor.setOption("keyMap",settings.get("editor-keymap").toLowerCase());
+	code_editor.setOption("lineNumbers",settings.get("line-numbers"));
 	debug.cell_width = 2**settings.get("cell-width");
 	debug.optimize=settings.get("optimize");
 	step_delay=settings.get("step-delay");

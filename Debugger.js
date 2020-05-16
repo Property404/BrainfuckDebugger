@@ -69,7 +69,7 @@ function tokenize(source, optimize=true)
 						new_token.partner === undefined
 					)
 					{
-						throw(`Unmatched ']' at line ${line_number} column ${column}`);
+						throw(`Unmatched ']' at line ${line_number+1} column ${column+1}`);
 					}
 					tokens[new_token.partner].partner = token_index;
 					break;
@@ -256,7 +256,7 @@ export class Debugger
 				else
 					this.pointer+=token.value;
 				if(this.pointer<0)
-					throw(`Pointer out of bounds(pointer=${this.pointer}) at line ${token.line} column ${token.column}`)
+					throw(`Pointer out of bounds(pointer=${this.pointer}) at line ${token.line+1} column ${token.column+1}`)
 				break;
 			case TokenType.BF_INPUT:
 				if(!reverse)
