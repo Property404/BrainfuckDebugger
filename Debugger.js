@@ -203,7 +203,10 @@ export class Debugger
 		{
 			if(token.pass_stack)
 				token.pass_stack.length = 0;
-			token.in_progress = false;
+			if(token.value_stack)
+				token.value_stack.length = 0;
+			if(token.in_progress)
+				token.in_progress = false;
 		}
 	}
 
@@ -228,15 +231,16 @@ export class Debugger
 				if(reverse)
 				{
 					this.tape[this.pointer] = token.value_stack.pop();
-					if (this.tape[this.pointer] == null)
-					{
-						throw "Oh my gooooood";
-					}
 				}
 				else
 				{
 					token.value_stack.push(this.tape[this.pointer]);
 					this.tape[this.pointer] = 0;
+				}
+
+				if ( typeof this.tape[this.pointer] !== "number")
+				{
+					throw "Oh my gooooood";
 				}
 				break;
 
@@ -256,7 +260,7 @@ export class Debugger
 				else
 					this.pointer+=token.value;
 				if(this.pointer<0)
-					throw(`Pointer out of bounds(pointer=${this.pointer}) at line ${token.line+1} column ${token.column+1}`)
+					throw(`Pointer out of bounds(pointer=${this.pointer}, direction=${reverse?"reverse":"forward"}) at line ${token.line+1} column ${token.column+1}`);
 				break;
 			case TokenType.BF_INPUT:
 				if(!reverse)
@@ -296,10 +300,10 @@ export class Debugger
 			case TokenType.BF_LOOP_OPEN:
 				if(!reverse)
 				{
+					if(!token.in_progress)
+						token.pass_stack.push(0);
 					if(this.tape[this.pointer])
 					{
-						if(!token.in_progress)
-							token.pass_stack.push(0);
 						token.in_progress = true;
 						token.pass_stack[token.pass_stack.length-1]++;
 					}
@@ -312,11 +316,12 @@ export class Debugger
 				}
 				else
 				{
+					if(typeof token.in_progress !== "boolean")
+						throw("Unexpected inprogress value");
 					if(token.pass_stack.slice(-1)[0]>token.in_progress)
 					{
 						token.pass_stack[token.pass_stack.length-1]--;
 						this.pc = token.partner;
-						//token.in_progress = false;
 					}
 					else
 					{
