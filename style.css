@@ -252,6 +252,13 @@ body{
 	height:1.1rem;
 	overflow-y:scroll;
 }
+#iobox-cursor
+{
+	margin-left:.1rem;
+	background-color:currentColor;
+	animation: 1s blink step-end infinite;
+}
+
 #tape-container{
 	grid-area: tape;
 	position:relative;
@@ -323,6 +330,15 @@ body{
 	cursor:initial;
 }
 
+@keyframes "blink" {
+  from, to {
+    color: transparent;
+  }
+  50% {
+    color: currentColor;
+  }
+}
+
 /* Mid-size */
 @media(min-width:25rem){
 	#settings-modal
@@ -345,3 +361,5 @@ body{
 		height:55%;
 	}
 }
+
+

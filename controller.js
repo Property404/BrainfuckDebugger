@@ -79,6 +79,10 @@ function switchToInputMode()
 {
 	last_state = mode;
 	switchToDebugMode();
+
+	const iobox = document.querySelector("#iobox");
+	iobox.focus();
+
 	mode = Mode.INPUT_MODE;
 }
 function switchFromInputMode()
@@ -268,18 +272,6 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-function displayStacks()
-{
-	for(const token of debug.tokens)
-	{
-		if(token.character==='[')
-		{
-			console.log(token.pass_stack);
-			console.log(token.in_progress);
-		}
-	}
-}
-
 
 document.querySelector("#step-forward-button").addEventListener("click",()=> {
 	switchToDebugMode();
@@ -310,7 +302,7 @@ async function play(){
 		 */
 		if(
 			step_delay>0||
-			(!(counter%1000)) ||
+			((counter%1000)===0) ||
 			[
 				TokenType.BF_OUTPUT,
 				TokenType.BF_INPUT,
@@ -324,7 +316,7 @@ async function play(){
 		}
 		else
 		{
-			if(!step(false, false))break;;
+			if(!step(false, false))break;
 		}
 		counter++;
 	}
@@ -357,16 +349,28 @@ document.querySelector("#edit-panel-container .CodeMirror").addEventListener("cl
 		switchToEditMode();
 });
 
-function addCharacterToTerminal(ch)
+function addCharacterToIOBox(ch)
 {
 	const term = document.querySelector("#iobox");
-	term.textContent+=ch;
+	console.log(ch);
+	if(ch==='\r')
+	{
+		console.log("Return");
+		ch='\n\r';
+	}
+	term.querySelector("#iobox-content").textContent+=ch;
 	term.scrollTop = term.scrollHeight;
-
 }
+
+document.querySelector("#iobox").addEventListener("focus", event=>{
+	iobox.querySelector("#iobox-cursor").removeAttribute("hidden");
+});
+document.querySelector("#iobox").addEventListener("blur", event=>{
+	iobox.querySelector("#iobox-cursor").hidden = true;
+});
+
 document.querySelector("#iobox").addEventListener("keydown", event=>{
 	const key = event.key;
-	console.log("input:"+key);
 	if(event.isComposing ||
 		event.keyCode === 229||
 		mode !== Mode.INPUT_MODE
@@ -390,14 +394,14 @@ document.querySelector("#iobox").addEventListener("keydown", event=>{
 
 	if(character.length === 1)
 	{
-		addCharacterToTerminal(character);
+		addCharacterToIOBox(character);
 		input_queue.push(character.charCodeAt(0));
 	}
 	if(key==="Enter" && mode === Mode.INPUT_MODE)
 		switchFromInputMode();
 });
 
-debug.output_callback=addCharacterToTerminal;
+debug.output_callback=addCharacterToIOBox;
 
 function raiseError(message)
 {
@@ -445,6 +449,7 @@ document.getElementById("open-settings").addEventListener("click",()=>{
 });
 document.getElementById("clear-iobox").addEventListener("click",()=>{
 	document.getElementById("iobox").textContent="";
+	input_queue.length=0;
 });
 
 clearTape();
