@@ -44,14 +44,35 @@ let last_state;
 let mark;
 // The time we wait between steps when debugging
 let step_delay=0;
+// Rows that we stop at
+// Only in "Play" mode
+const breakpoints = new Set();
 
 const code_editor = CodeMirror(document.querySelector("#edit-panel-container"),
 	{
 		lineWrapping: true,
 		spellCheck:false,
 		value:accessLocalStorage("source")||"",
+		gutters: ["breakpoints","CodeMirror-linenumbers"]
 	}
 );
+code_editor.on("gutterClick", function(cm, n) {
+	const info = cm.lineInfo(n);
+	const addBreakPoint = ()=>{
+		const marker = document.createElement("div");
+		marker.style.color = "#822";
+		marker.innerHTML = "●";
+		breakpoints.add(info.line);
+		return marker;
+	}
+	const removeBreakPoint = ()=>{
+		breakpoints.delete(info.line);
+	}
+	cm.setGutterMarker(n, "breakpoints",
+		(info.gutterMarkers?removeBreakPoint:addBreakPoint)());
+	console.log(breakpoints);
+});
+
 
 function updateSettings()
 {
@@ -312,6 +333,8 @@ async function play(){
 		 * Only stopping occasionally
 		 * or for input or output
 		 */
+		let token = debug.tokens[debug.pc];
+		const prev_line = token.line;
 		if(
 			step_delay>0||
 			((counter%1000)===0) ||
@@ -320,7 +343,7 @@ async function play(){
 				TokenType.BF_INPUT,
 				TokenType.BF_START,
 				TokenType.BF_END
-			].includes(debug.tokens[debug.pc].type)
+			].includes(token.type)
 		)
 		{
 			if(!step())break;
@@ -331,6 +354,12 @@ async function play(){
 			if(!step(false, false))break;
 		}
 		counter++;
+
+		token = debug.tokens[debug.pc];
+		if(breakpoints.has(token.line) && token.line !== prev_line)
+		{
+			break;
+		}
 	}
 	updateTape();
 	updateButtons();

@@ -241,6 +241,11 @@ body{
 	display:block;
 	bottom:0px;
 }
+#edit-panel-container .breakpoints
+{
+	width: .5rem;
+}
+
 
 #iobox{
 	background-color:var(--iobox-bg-color);
