@@ -490,7 +490,7 @@ document.getElementById("open-settings").addEventListener("click",()=>{
 	location.hash="appearance-settings";
 });
 document.getElementById("clear-iobox").addEventListener("click",()=>{
-	document.getElementById("iobox").textContent="";
+	document.getElementById("iobox-content").textContent="";
 	input_queue.length=0;
 });
 
