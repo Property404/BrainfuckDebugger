@@ -106,6 +106,7 @@ function switchToEditMode()
 	if(mode === Mode.EDIT_MODE)
 		return;
 	mode = Mode.TRANSITION_MODE;
+	loadAndReset("");
 	code_editor.setOption("readOnly", false);
 	if(mark)mark.clear();
 	mode = Mode.EDIT_MODE;
@@ -154,48 +155,55 @@ function updateHighlight()
 		});
 		code_editor.scrollIntoView(anchor);
 	}
+	else if(mark)
+		mark.clear();
 
 }
 
 function updateButtons()
 {
+	const playpause_button = document.getElementById("playpause-button");
+	const step_forward_button = document.getElementById("step-forward-button");
+	const step_back_button = document.getElementById("step-back-button");
+
 	if(debug.atEnd())
 	{
-		document.querySelector("#playpause-button").disabled=true;
-		document.querySelector("#step-forward-button").disabled=true;
+		playpause_button.disabled=true;
+		step_forward_button.disabled=true;
 	}
 	else
 	{
-		document.querySelector("#playpause-button").disabled=false;
-		document.querySelector("#step-forward-button").disabled=false;
+		playpause_button.disabled=false;
+		step_forward_button.disabled=false;
 	}
 
 	if(debug.atBeginning())
 	{
-		document.querySelector("#step-back-button").disabled=true;
+		step_back_button.disabled=true;
 	}
 	else
 	{
-		document.querySelector("#step-back-button").disabled=false;
+		step_back_button.disabled=false;
 	}
 
 	if(mode === Mode.PLAY_MODE)
 	{
-		document.querySelector("#playpause-button").innerHTML=PAUSE_BUTTON_TEXT;
+		playpause_button.innerHTML=PAUSE_BUTTON_TEXT;
 	}
 	else
 	{
-		document.querySelector("#playpause-button").innerHTML=PLAY_BUTTON_TEXT;
+		playpause_button.innerHTML=PLAY_BUTTON_TEXT;
 	}
 }
 
 function loadAndReset()
 {
 	const source = code_editor.getValue();
+	input_queue.length=0;
 
 	/* This causes debug to reset, as well*/
 	try{
-	debug.load(source);
+		debug.load(source);
 	}catch(e){
 		console.dir(e);
 		raiseError(e);
@@ -203,7 +211,6 @@ function loadAndReset()
 		return;
 	}
 	putLocalStorage("source", source);
-
 	updateButtons();
 	clearTape();
 }
@@ -211,9 +218,12 @@ function loadAndReset()
 function clearTape()
 {
 	updateTape();
+
+	const tape = document.getElementById("tape");
 	for(let i=0;i<highest_cell;i++)
 	{
-		let cell = document.querySelector("#cell-"+i+" .cell-value").innerHTML=0;
+		const cell = tape.querySelector("#cell-"+i)
+		cell.querySelector(".cell-value").innerHTML="0";
 	}
 }
 
@@ -238,14 +248,16 @@ function updateTape()
 		highest_cell = desired_amount_of_cells;
 	}
 
-	if(pointer !== undefined)
+	const old_cell = tape.querySelector(".active");
+	if(old_cell)
+	{
+		old_cell.classList.remove("active");
+	}
+	if(!debug.atBeginning())
 	{
 		const val = debug.tape[pointer]||0;
 		const current_cell = tape.querySelector("#cell-"+pointer||0);
 
-		const old_cell = tape.querySelector(".active");
-		if(old_cell)
-			old_cell.classList.remove("active");
 		current_cell.querySelector(".cell-value").textContent=val;
 		current_cell.classList.add("active");
 	}
@@ -320,7 +332,9 @@ async function play(){
 		}
 		counter++;
 	}
+	updateTape();
 	updateButtons();
+	updateHighlight();
 	if(mode === Mode.PLAY_MODE)
 	{
 		pause();
@@ -352,7 +366,6 @@ document.querySelector("#edit-panel-container .CodeMirror").addEventListener("cl
 function addCharacterToIOBox(ch)
 {
 	const term = document.querySelector("#iobox");
-	console.log(ch);
 	if(ch==='\r')
 	{
 		console.log("Return");
@@ -454,3 +467,4 @@ document.getElementById("clear-iobox").addEventListener("click",()=>{
 
 clearTape();
 updateSettings();
+updateButtons();

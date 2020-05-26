@@ -183,11 +183,13 @@ export class Debugger
 
 	atEnd()
 	{
+		if(!this.tokens)return false;
 		return this.pc >= this.tokens.length || this.tokens[this.pc].type==TokenType.BF_END;
 	}
 	
 	atBeginning()
 	{
+		if(!this.tokens)return true;
 		return this.pc == 0;
 	}
 
