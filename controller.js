@@ -60,7 +60,7 @@ code_editor.on("gutterClick", function(cm, n) {
 	const info = cm.lineInfo(n);
 	const addBreakPoint = ()=>{
 		const marker = document.createElement("div");
-		marker.style.color = "#822";
+		marker.classList.add("breakpoint");
 		marker.innerHTML = "●";
 		breakpoints.add(info.line);
 		return marker;

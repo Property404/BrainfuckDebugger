@@ -243,7 +243,12 @@ body{
 }
 #edit-panel-container .breakpoints
 {
-	width: .5rem;
+}
+#edit-panel-container .breakpoint
+{
+	color: #822;
+	width: .5em;
+	margin-left:2px
 }
 
 
