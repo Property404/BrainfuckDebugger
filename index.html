@@ -10,6 +10,8 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 		<link id="editor-theme" rel="stylesheet" href="node_modules/codemirror-minified/theme/monokai.css">
 		<script src="node_modules/codemirror-minified/lib/codemirror.js" defer></script>
+		<script src="node_modules/codemirror-minified/addon/edit/matchbrackets.js" defer></script>
+		<script src="node_modules/codemirror-minified/addon/edit/closebrackets.js" defer></script>
 		<script src="node_modules/codemirror-minified/keymap/vim.js" defer></script>
 		<script src="node_modules/codemirror-minified/keymap/emacs.js" defer></script>
 		<script src="thirdparty/brainfuck-highlight.min.js" defer></script>
@@ -147,6 +149,14 @@
 					<div class="option-group">
 						<label for="opt-line-numbers">Line Numbering</label>
 						<input id="opt-line-numbers" type="checkbox">
+					</div>
+					<div class="option-group">
+						<label for="opt-match-brackets">Bracket Matching</label>
+						<input id="opt-match-brackets" type="checkbox">
+					</div>
+					<div class="option-group">
+						<label for="opt-close-brackets">Auto-close Brackets</label>
+						<input id="opt-close-brackets" type="checkbox">
 					</div>
 				</form>
 				<form id="debugger-settings">

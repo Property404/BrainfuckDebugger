@@ -53,7 +53,9 @@ const code_editor = CodeMirror(document.querySelector("#edit-panel-container"),
 		lineWrapping: true,
 		spellCheck:false,
 		value:accessLocalStorage("source")||"",
-		gutters: ["breakpoints","CodeMirror-linenumbers"]
+		gutters: ["breakpoints","CodeMirror-linenumbers"],
+		matchBrackets: true,
+		autoCloseBrackets: true
 	}
 );
 
@@ -89,6 +91,8 @@ function updateSettings()
 	code_editor.setOption("mode", settings.get("editor-highlighting")?"brainfuck":null);
 	code_editor.setOption("keyMap",settings.get("editor-keymap").toLowerCase());
 	code_editor.setOption("lineNumbers",settings.get("line-numbers"));
+	code_editor.setOption("autoCloseBrackets",settings.get("close-brackets"));
+	code_editor.setOption("matchBrackets",settings.get("match-brackets"));
 	debug.cell_width = 2**settings.get("cell-width");
 	debug.optimize=settings.get("optimize");
 	step_delay=settings.get("step-delay");

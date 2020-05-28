@@ -52,6 +52,8 @@ export class Settings
 				new Option("step-delay", 1),
 				new Option("optimize", true),
 				new Option("line-numbers", true),
+				new Option("close-brackets", true),
+				new Option("match-brackets", true),
 			];
 		this.update_callback = update_callback;
 		this.options_map = {};
