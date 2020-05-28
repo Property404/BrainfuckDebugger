@@ -243,12 +243,11 @@ body{
 }
 #edit-panel-container .breakpoints
 {
+	padding-right:.5rem;
 }
 #edit-panel-container .breakpoint
 {
-	color: #822;
-	width: .5em;
-	margin-left:2px
+	padding-left:.125rem;
 }
 
 
@@ -333,7 +332,7 @@ body{
 	border-color:var(--button-hover-border-color);
 }
 
-.debug-button[disabled]
+.debug-button[disabled], #tape.disabled
 {
 	opacity:30%;
 	background-color:transparent;

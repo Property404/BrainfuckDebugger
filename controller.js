@@ -56,21 +56,31 @@ const code_editor = CodeMirror(document.querySelector("#edit-panel-container"),
 		gutters: ["breakpoints","CodeMirror-linenumbers"]
 	}
 );
+
+function addBreakpoint(line)
+{
+	const marker = document.createElement("div");
+	marker.classList.add("breakpoint");
+	marker.innerHTML = "●";
+	breakpoints.add(line);
+	code_editor.setGutterMarker(line, "breakpoints", marker);
+}
+function removeBreakpoint(line)
+{
+	breakpoints.delete(line);
+	code_editor.setGutterMarker(line, "breakpoints",null);
+}
+function clearBreakpoints()
+{
+	breakpoints.length=0;
+	code_editor.clearGutter("breakpoints");
+}
 code_editor.on("gutterClick", function(cm, n) {
 	const info = cm.lineInfo(n);
-	const addBreakPoint = ()=>{
-		const marker = document.createElement("div");
-		marker.classList.add("breakpoint");
-		marker.innerHTML = "●";
-		breakpoints.add(info.line);
-		return marker;
-	}
-	const removeBreakPoint = ()=>{
-		breakpoints.delete(info.line);
-	}
-	cm.setGutterMarker(n, "breakpoints",
-		(info.gutterMarkers?removeBreakPoint:addBreakPoint)());
-	console.log(breakpoints);
+	if(!info.gutterMarkers)
+		addBreakpoint(n);
+	else
+		removeBreakpoint(n)
 });
 
 
@@ -127,15 +137,28 @@ function switchToEditMode()
 	if(mode === Mode.EDIT_MODE)
 		return;
 	mode = Mode.TRANSITION_MODE;
-	loadAndReset("");
+
+	// Disable tape to show user that we're not debugging
+	document.getElementById("tape").classList.add("disabled");
+
+	// Reset debugger - this is mainly to stop cell highlighting
+	debug.load("");
+
+	// Disable CodeMirror input
 	code_editor.setOption("readOnly", false);
+
+	// Remove highlighting
 	if(mark)mark.clear();
+
 	mode = Mode.EDIT_MODE;
+
 	updateButtons();
+	updateTape();
 }
 
 function switchToDebugMode()
 {
+
 	if([Mode.PLAY_MODE,Mode.DEBUG_MODE,Mode.INPUT_MODE].
 		includes(mode))
 	{
@@ -146,12 +169,22 @@ function switchToDebugMode()
 	mode = Mode.TRANSITION_MODE;
 
 	loadAndReset();
+	document.getElementById("tape").classList.remove("disabled");
 	code_editor.setOption("readOnly", true);
+
+	// Restore breakpoints
+	breakpoints.length=0;
+	for(let i=0;i<code_editor.lineCount();i++)
+	{
+		const info = code_editor.lineInfo(i);
+		if(info.gutterMarkers)
+			addBreakpoint(i);
+	}
 
 	// Reset tape to beginning
 	const tape_container = document.getElementById("tape-container");
 	tape_container.scrollLeft = 0;
-	
+
 	updateHighlight();
 
 	mode = Mode.DEBUG_MODE;
@@ -387,7 +420,7 @@ document.querySelector("#reset-button").addEventListener("click",()=> {
 	updateHighlight();
 });
 
-document.querySelector("#edit-panel-container .CodeMirror").addEventListener("click",()=>{
+document.querySelector("#edit-panel-container .CodeMirror-lines").addEventListener("click",()=>{
 	if(mode === Mode.DEBUG_MODE)
 		switchToEditMode();
 });
@@ -397,7 +430,6 @@ function addCharacterToIOBox(ch)
 	const term = document.querySelector("#iobox");
 	if(ch==='\r')
 	{
-		console.log("Return");
 		ch='\n\r';
 	}
 	term.querySelector("#iobox-content").textContent+=ch;
@@ -459,7 +491,6 @@ function input_callback()
 	if(input_queue.length > 0)
 	{
 		val = input_queue.shift();
-		console.log("val: "+val);
 	}
 	else
 	{
@@ -493,6 +524,8 @@ document.getElementById("clear-iobox").addEventListener("click",()=>{
 	document.getElementById("iobox-content").textContent="";
 	input_queue.length=0;
 });
+document.getElementById("clear-breakpoints").
+	addEventListener("click", clearBreakpoints())
 
 clearTape();
 updateSettings();
