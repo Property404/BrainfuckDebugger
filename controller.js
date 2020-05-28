@@ -519,12 +519,24 @@ document.querySelectorAll(".close-modal").forEach(target=>target.
 	addEventListener("click",closeModal)
 );
 dom_elements.hamburger_button.addEventListener("click", ()=>{
+	let initial = true;
 	const menu = dom_elements.hamburger_menu;
-	menu.toggleAttribute("hidden");
+	const handler = e=>{
+		// Skip first click
+		if(initial)
+			initial= false;
+		else
+		{
+			menu.hidden = true;
+			document.removeEventListener("click", handler);
+		}
+	}
+	if(menu.hidden)
+	{
+		menu.removeAttribute("hidden");
+		document.addEventListener("click", handler);
+	}
 });
-dom_elements.hamburger_menu.addEventListener("click", ()=> {
-		dom_elements.hamburger_menu.setAttribute("hidden", true);
-	});
 document.getElementById("open-settings").addEventListener("click",()=>{
 	dom_elements.settings_modal.removeAttribute("hidden");
 	location.hash="appearance-settings";
