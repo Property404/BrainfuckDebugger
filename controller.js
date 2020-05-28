@@ -287,7 +287,8 @@ function clearTape()
 
 function updateTape()
 {
-	const tape = document.getElementById("tape");
+	const tape_container = document.getElementById("tape-container");
+	const tape = tape_container.querySelector("#tape");
 	const pointer = debug.pointer;
 	const desired_amount_of_cells = pointer>MIN_CELLS?pointer:MIN_CELLS;
 
@@ -315,9 +316,13 @@ function updateTape()
 	{
 		const val = debug.tape[pointer]||0;
 		const current_cell = tape.querySelector("#cell-"+pointer||0);
+		const rect = current_cell.getBoundingClientRect();
 
 		current_cell.querySelector(".cell-value").textContent=val;
 		current_cell.classList.add("active");
+
+		if ((rect.right < 0) || (rect.left > window.innerWidth))
+			tape_container.scrollLeft = current_cell.offsetLeft;
 	}
 }
 function step(reverse=false, update=true)
