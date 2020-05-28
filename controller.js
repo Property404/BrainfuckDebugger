@@ -529,7 +529,7 @@ document.getElementById("clear-iobox").addEventListener("click",()=>{
 	input_queue.length=0;
 });
 document.getElementById("clear-breakpoints").
-	addEventListener("click", clearBreakpoints())
+	addEventListener("click", clearBreakpoints)
 
 clearTape();
 updateSettings();
