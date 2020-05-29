@@ -209,6 +209,8 @@ export class Debugger
 				token.value_stack.length = 0;
 			if(token.in_progress)
 				token.in_progress = false;
+			if(token.initial)
+				token.initial = false;
 		}
 	}
 
@@ -217,6 +219,11 @@ export class Debugger
 		let stepagain = false;
 		if(reverse)
 			this.pc --;
+
+		if(this.pc<0 || this.pc>this.tokens.length)
+		{
+			throw("Program counter out of bounds (pc = "+this.pc+")");
+		}
 		
 		const token = this.tokens[this.pc];
 
@@ -302,18 +309,24 @@ export class Debugger
 			case TokenType.BF_LOOP_OPEN:
 				if(!reverse)
 				{
-					if(!token.in_progress)
+					if(!token.initial)
+					{
 						token.pass_stack.push(0);
+					}
 					if(this.tape[this.pointer])
 					{
 						token.in_progress = true;
+						token.initial = true;
 						token.pass_stack[token.pass_stack.length-1]++;
 					}
 					else
 					{
-						token.in_progress = false;
+						if(!token.in_progress && token.initial)
+							token.pass_stack[token.pass_stack.length-1]++;
 						// Otherwise we just pass by 
 						this.pc = token.partner;
+						token.in_progress = false;
+						token.initial = false;
 					}
 				}
 				else
@@ -324,11 +337,13 @@ export class Debugger
 					{
 						token.pass_stack[token.pass_stack.length-1]--;
 						this.pc = token.partner;
+						token.initial = true;
 					}
 					else
 					{
 						token.pass_stack.pop();
 						token.in_progress = false;
+						token.initial = false;
 					}
 				}
 				break;
@@ -352,7 +367,13 @@ export class Debugger
 		}
 
 		if(!reverse)
+		{
 			this.pc ++;
+			if(this.pc>=this.tokens.length)
+			{
+				throw("Program counter out of bounds (pc = "+this.pc+")");
+			}
+		}
 
 		if(stepagain)
 			this.step(reverse);
