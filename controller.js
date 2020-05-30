@@ -84,7 +84,7 @@ code_editor.on("gutterClick", function(cm, n) {
 	if(!info.gutterMarkers)
 		addBreakpoint(n);
 	else
-		removeBreakpoint(n)
+		removeBreakpoint(n);
 });
 
 
@@ -283,7 +283,7 @@ function clearTape()
 	const tape = document.getElementById("tape");
 	for(let i=0;i<highest_cell;i++)
 	{
-		const cell = tape.querySelector("#cell-"+i)
+		const cell = tape.querySelector("#cell-"+i);
 		cell.querySelector(".cell-value").innerHTML="0";
 	}
 }
@@ -524,7 +524,7 @@ dom_elements.hamburger_button.addEventListener("click", ()=>{
 			menu.hidden = true;
 			document.removeEventListener("click", handler);
 		}
-	}
+	};
 	if(menu.hidden)
 	{
 		menu.removeAttribute("hidden");
@@ -537,7 +537,7 @@ document.getElementById("clear-iobox").addEventListener("click",()=>{
 	input_queue.length=0;
 });
 document.getElementById("clear-breakpoints").
-	addEventListener("click", clearBreakpoints)
+	addEventListener("click", clearBreakpoints);
 
 document.querySelectorAll("#examples-modal button[data-example]").forEach(
 	button=>button.addEventListener("click",

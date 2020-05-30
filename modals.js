@@ -55,7 +55,7 @@ for(const modal of document.querySelectorAll(".modal"))
 		const switch_id = switch_button.getAttribute("data-goto");
 		console.log(switch_id);
 		if(switch_button !== switch_buttons[0])
-			document.querySelector(`#${switch_id}`).hidden = true
+			document.querySelector(`#${switch_id}`).hidden = true;
 
 		switch_button.addEventListener("click",switchToPanel.bind(modal, switch_id));
 	}

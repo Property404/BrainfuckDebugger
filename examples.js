@@ -92,7 +92,7 @@ If the interpreter errors on overflow this is where it'll happen
 >>.++.+++++++..<-.>>-
 Clean up used cells.
 [[-]<]`,
-}
+};
 
 export function getExample(name)
 {
