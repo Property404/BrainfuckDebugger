@@ -1,4 +1,5 @@
 import {TokenType,Debugger} from "./Debugger.js";
+import {getExample} from "./examples.js";
 import {accessLocalStorage, putLocalStorage, Settings} from "./Settings.js";
 
 const PAUSE_BUTTON_TEXT = "Pause";
@@ -535,6 +536,13 @@ document.getElementById("clear-iobox").addEventListener("click",()=>{
 });
 document.getElementById("clear-breakpoints").
 	addEventListener("click", clearBreakpoints)
+
+document.querySelectorAll("#examples-modal button[data-example]").forEach(
+	button=>button.addEventListener("click",
+		e=>code_editor.setOption("value",
+			getExample(e.target.getAttribute("data-example")))
+	)
+);
 
 clearTape();
 updateSettings();

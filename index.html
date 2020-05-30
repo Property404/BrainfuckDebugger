@@ -30,6 +30,31 @@
 				</span>
 			</div>
 		</div>
+		<div id="examples-modal" class="center-of-viewport modal" hidden>
+			<div class="modal-topbar">
+				<span class="modal-title">Examples</span>
+				<button class="close-modal">X</button>
+			</div>
+			<nav class="modal-main-view">
+				<ul>
+					<li>
+						<button data-example="hello-world">
+							 Hello World
+						</button>
+					</li>
+					<li>
+						<button data-example="rot13">
+							 ROT13
+						</button>
+					</li>
+					<li>
+						<button data-example="cell-size">
+							 Cell Size
+						</button>
+					</li>
+				</ul>
+			</nav>
+		</div>
 		<div id="help-modal" class="center-of-viewport modal multi-modal" hidden>
 			<nav class="modal-nav">
 				<ul>
@@ -43,13 +68,6 @@
 							 About
 						</button>
 					</li>
-					<!--
-					<li>
-						<button data-goto="debugger-settings">
-							Debugger
-						</button>
-					</li>
-					-->
 				</ul>
 			</nav>
 			<div class="modal-topbar">
@@ -99,6 +117,13 @@
 				<div id="about-help">
 					Brainfuck Debugger<br>
 					Copyright 2020 Dagan Martinez under the MIT license<br><br>
+					<a target="_blank" rel="noopener noreferrer" href="https://github.com/Property404/BrainfuckDebugger">
+						Source Code<span class="monochrome-emoji">🔗</span>
+					</a>
+					<br>
+					<a target="_blank" rel="noopener noreferrer" href="https://dagans.dev">
+						About Author<span class="monochrome-emoji">🔗</span>
+					</a>
 				</div>
 			</div>
 			</div>
@@ -271,18 +296,13 @@
 							<button id="clear-breakpoints">Clear Breakpoints</button>
 						</li>
 						<li>
-							<a target="_blank" rel="noopener noreferrer" href="https://github.com/Property404/BrainfuckDebugger">
-								Source Code<span class="monochrome-emoji">🔗</span>
-							</a>
-						</li>
-						<li>
-							<a target="_blank" rel="noopener noreferrer" href="https://dagans.dev">
-								About Author<span class="monochrome-emoji">🔗</span>
-							</a>
-						</li>
-						<li>
 							<button class="modal-activator" data-modal-open="settings-modal">
 								Settings
+							</button>
+						</li>
+						<li>
+							<button class="modal-activator" data-modal-open="examples-modal">
+								Examples
 							</button>
 						</li>
 						<li>

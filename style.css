@@ -4,6 +4,12 @@
 [hidden]{
 	display:none !important;
 }
+code{
+	white-space:pre-wrap;
+}
+a{
+	color:inherit;
+}
 
 .monochrome-emoji{
 	text-shadow: 0 0 0 red;
@@ -101,7 +107,7 @@ button:hover
 	right:1rem;
 	color:var(--modal-fg-color);
 }
-#hamburger-menu .monochrome-emoji{
+.modal .monochrome-emoji{
 	text-shadow: 0 0 0 var(--modal-fg-color);
 }
 #hamburger-menu ul
@@ -139,6 +145,18 @@ button:hover
 #error-message{
 	margin:0rem .5rem;
 }
+#examples-modal {
+	min-width:20%;
+}
+
+#examples-modal nav,
+#examples-modal nav ul,
+#examples-modal nav li,
+#examples-modal nav button
+{
+	text-align:center;
+	width:100%;
+}
 
 .multi-modal
 {
@@ -161,9 +179,11 @@ button:hover
 	margin:0 auto;
 	font-weight:900;
 	font-variant:small-caps;
+	font-size:1.15em;
 }
 .close-modal
 {
+	font-size:1.15em;
 	background-color:transparent;
 	color:inherit;
 	border:none;
@@ -180,7 +200,7 @@ button:hover
 	max-height:100%;
 	overflow:auto;
 }
-.modal-nav button
+.modal nav button
 {
 	display:block;
 	outline:none;
@@ -192,15 +212,15 @@ button:hover
 	padding-right:.4rem;
 	padding-left:.4rem;
 }
-.modal-nav ul
+.modal nav ul
 {
 	padding:0;
 }
-.modal-nav li
+.modal nav li
 {
 	display:block;
 }
-.modal-nav li:hover
+.modal nav li:hover
 {
 	background-color:var(--modal-hover-bg-color);
 	color:var(--modal-hover-fg-color);
@@ -365,7 +385,7 @@ button:hover
 		width:85%;
 		height:85%;
 	}
-	.modal-nav a
+	.modal nav a
 	{
 		padding-right:1rem;
 		padding-left:1rem;

@@ -1,3 +1,4 @@
+import {getExample} from "./examples.js";
 // let's still be functional even if storage is disabled
 let fauxStorage={};
 export function putLocalStorage(key, value)
@@ -15,6 +16,11 @@ export function accessLocalStorage(key)
 		val = localStorage[key];
 	}catch(e){
 		val = fauxStorage[key];
+	}
+	if(val === undefined)
+	{
+		if(key === "source")
+			return getExample("hello-world");
 	}
 	return val;
 }
