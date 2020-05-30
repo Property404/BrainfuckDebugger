@@ -16,6 +16,7 @@
 		<script src="node_modules/codemirror-minified/keymap/emacs.js" defer></script>
 		<script src="thirdparty/brainfuck-highlight.min.js" defer></script>
 		<script src="controller.js" type="module"></script>
+		<script src="modals.js" type="module"></script>
 	</head>
 	<body>
 		<div id="error-modal" class="center-of-viewport modal" hidden>
@@ -29,23 +30,96 @@
 				</span>
 			</div>
 		</div>
-		<div id="settings-modal" class="center-of-viewport modal" hidden>
+		<div id="help-modal" class="center-of-viewport modal multi-modal" hidden>
 			<nav class="modal-nav">
 				<ul>
 					<li>
-						<a href="#appearance-settings">
-							 Appearance
-						</a>
+						<button data-goto="language-help">
+							 Brainfuck
+						</button>
 					</li>
 					<li>
-						<a href="#editor-settings">
-							 Editor
-						</a>
+						<button data-goto="about-help">
+							 About
+						</button>
 					</li>
+					<!--
 					<li>
-						<a href="#debugger-settings">
+						<button data-goto="debugger-settings">
 							Debugger
-						</a>
+						</button>
+					</li>
+					-->
+				</ul>
+			</nav>
+			<div class="modal-topbar">
+				<span class="modal-title">help</span>
+				<button class="close-modal">X</button>
+			</div>
+			<div class="modal-main-view">
+				<div id='language-help'>
+					<div>
+						Brainfuck is a simple esoteric programming language with only 8 commands.
+						The language operates on an infinitely long "tape" of cells, with each cell holding a single value.
+						The "pointer" determines which cell is the current cell.
+					</div>
+					<div>
+						<code>&gt;</code>
+						<div>Increment the tape pointer</div>
+					</div>
+					<div>
+						<code>&lt;</code>
+						<div>Decrement the tape pointer</div>
+					</div>
+					<div>
+						<code>+</code>
+						<div>Increment the current cell</div>
+					</div>
+					<div>
+						<code>-</code>
+						<div>Decrement the current cell</div>
+					</div>
+					<div>
+						<code>.</code>
+						<div>Output the ASCII value of the current cell</div>
+					</div>
+					<div>
+						<code>,</code>
+						<div>Get input from user and store in current cell</div>
+					</div>
+					<div>
+						<code>[</code>
+						<div>If current cell is zero, go past matching <code>]</code>, else do nothing</div>
+					</div>
+					<div>
+						<code>]</code>
+						<div>Return to matching <code>[</code></div>
+					</div>
+				</div>
+				<div id="about-help">
+					Brainfuck Debugger<br>
+					Copyright 2020 Dagan Martinez under the MIT license<br><br>
+				</div>
+			</div>
+			</div>
+		</div>
+		<div id="settings-modal" class="center-of-viewport modal multi-modal" hidden>
+			<nav class="modal-nav">
+				<ul>
+					<li>
+						<button data-goto="appearance-settings">
+							 Appearance
+						</button>
+					</li>
+					<li>
+						<button data-goto="editor-settings">
+							 Editor
+						</button>
+					</li>
+					<li>
+						<button data-goto="debugger-settings">
+							Debugger
+						</button>
 					</li>
 				</ul>
 			</nav>
@@ -183,18 +257,13 @@
 				<button class="debug-button" id="step-forward-button">&gt;</button>
 			</nav>
 			<div class="hamburger-container">
-				<div class='hamburger-button' role="button">
+				<div class='hamburger-button modal-activator' role="button" data-modal-focus="hamburger-menu">
 					<div class="hamburger-line"></div>
 					<div class="hamburger-line"></div>
 					<div class="hamburger-line"></div>
 				</div>
-				<nav class='hamburger-menu modal' hidden> 
+				<nav id='hamburger-menu' class='hamburger-menu modal' hidden> 
 					<ul>
-						<li>
-							<button id="open-settings">
-								Settings
-							</button>
-						</li>
 						<li>
 							<button id="clear-iobox">Clear Output</button>
 						</li>
@@ -210,6 +279,16 @@
 							<a target="_blank" rel="noopener noreferrer" href="https://dagans.dev">
 								About Author<span class="monochrome-emoji">🔗</span>
 							</a>
+						</li>
+						<li>
+							<button class="modal-activator" data-modal-open="settings-modal">
+								Settings
+							</button>
+						</li>
+						<li>
+							<button class="modal-activator" data-modal-open="help-modal">
+								Help
+							</button>
 						</li>
 					</ul>
 				</nav>

@@ -31,6 +31,8 @@ body{
 }
 
 .modal{
+	overflow:auto;
+	max-height:100vh;
 	z-index:10;
 	min-width:5%;
 	min-height:5%;
@@ -73,7 +75,8 @@ body{
 	height:50%;
 	margin-right:.5rem;
 }
-.hamburger-button:hover
+.hamburger-button:hover,
+button:hover
 {
 	cursor:pointer;
 }
@@ -89,29 +92,29 @@ body{
 	height:20%;
 	left:0;
 }
-.hamburger-menu{
+#hamburger-menu{
 	display:block;
 	position:absolute;
 	opacity:97%;
-	z-index:10;
+	z-index:10000;
 	top:101%;
 	right:1rem;
 	color:var(--modal-fg-color);
 }
-.hamburger-menu .monochrome-emoji{
+#hamburger-menu .monochrome-emoji{
 	text-shadow: 0 0 0 var(--modal-fg-color);
 }
-.hamburger-menu ul
+#hamburger-menu ul
 {
 	margin:auto;
 	padding:0;
 }
-.hamburger-menu li
+#hamburger-menu li
 {
 	display:block;
 }
-.hamburger-menu li a,
-.hamburger-menu li button
+#hamburger-menu li a,
+#hamburger-menu li button
 {
 	display:block;
 	white-space:nowrap;
@@ -124,16 +127,20 @@ body{
 	text-align:left;
 	background-color:transparent;
 }
-.hamburger-menu li:hover
+#hamburger-menu li:hover
 {
 	color:var(--modal-hover-fg-color);
 	background-color:var(--modal-hover-bg-color);
 }
-.hamburger-menu li:hover .monochrome-emoji{
+#hamburger-menu li:hover .monochrome-emoji{
 	text-shadow: 0 0 0 var(--modal-hover-fg-color);
 }
 
-#settings-modal
+#error-message{
+	margin:0rem .5rem;
+}
+
+.multi-modal
 {
 	display:grid;
 	width:98%;
@@ -173,11 +180,15 @@ body{
 	max-height:100%;
 	overflow:auto;
 }
-.modal-nav a
+.modal-nav button
 {
 	display:block;
-	text-decoration:none;
+	outline:none;
+	background-color:inherit;
+	width:100%;
+	border:none;
 	color:inherit;
+	text-align:left;
 	padding-right:.4rem;
 	padding-left:.4rem;
 }
@@ -200,10 +211,12 @@ body{
 	margin-top:.5rem;
 	width:100%;
 	display:flex;
-	justify-content:center;
+	flex-direction:column;
+	align-items:center;
 	text-align:center;
 	overflow:auto;
 	padding-bottom:.5rem;
+	max-height:100%;
 }
 .modal-main-view .option-group
 {
@@ -212,13 +225,10 @@ body{
 
 .modal-main-view form
 {
-	display:none;
+	display:block;
 	text-align:center;
 }
-.modal-main-view form:target
-{
-	display:block;
-}
+
 .highlight{
 	  border-bottom:.2rem solid currentColor;
 	  position:relative;
@@ -350,7 +360,7 @@ body{
 
 /* Mid-size */
 @media(min-width:25rem){
-	#settings-modal
+	.multi-modal
 	{
 		width:85%;
 		height:85%;
@@ -364,7 +374,7 @@ body{
 
 /* Desktop */
 @media(min-width:40rem){
-	#settings-modal
+	.multi-modal
 	{
 		width:55%;
 		height:55%;

@@ -20,7 +20,7 @@ const Mode = Object.freeze({
 // Common DOM elements
 const dom_elements=
 {
-	hamburger_menu : document.querySelector(".hamburger-menu"),
+	hamburger_menu : document.querySelector("#hamburger-menu"),
 	hamburger_button : document.querySelector(".hamburger-button"),
 	settings_modal : document.querySelector("#settings-modal"),
 };
@@ -509,15 +509,6 @@ function input_callback()
 }
 debug.input_callback = input_callback;
 
-function closeModal()
-{
-	const modal = event.target.closest(".modal");
-	modal.setAttribute("hidden",true);
-	location.hash="";
-}
-document.querySelectorAll(".close-modal").forEach(target=>target.
-	addEventListener("click",closeModal)
-);
 dom_elements.hamburger_button.addEventListener("click", ()=>{
 	let initial = true;
 	const menu = dom_elements.hamburger_menu;
@@ -537,10 +528,7 @@ dom_elements.hamburger_button.addEventListener("click", ()=>{
 		document.addEventListener("click", handler);
 	}
 });
-document.getElementById("open-settings").addEventListener("click",()=>{
-	dom_elements.settings_modal.removeAttribute("hidden");
-	location.hash="appearance-settings";
-});
+
 document.getElementById("clear-iobox").addEventListener("click",()=>{
 	document.getElementById("iobox-content").textContent="";
 	input_queue.length=0;
