@@ -59,6 +59,7 @@ const code_editor = CodeMirror(document.querySelector("#edit-panel-container"),
 		autoCloseBrackets: true
 	}
 );
+code_editor.save = ()=>putLocalStorage("source",code_editor.getValue());
 
 function addBreakpoint(line)
 {
@@ -258,6 +259,7 @@ function updateButtons()
 function loadAndReset()
 {
 	const source = code_editor.getValue();
+	code_editor.save();
 	input_queue.length=0;
 
 	/* This causes debug to reset, as well*/
@@ -269,7 +271,7 @@ function loadAndReset()
 		switchToEditMode();
 		return;
 	}
-	putLocalStorage("source", source);
+
 	updateButtons();
 	clearTape();
 }
