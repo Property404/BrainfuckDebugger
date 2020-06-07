@@ -47,6 +47,7 @@ function tokenize(source, optimize=true)
 					{
 						new_token.type=TokenType.BF_ZERO;
 						new_token.value_stack = [];
+						new_token.is_positive = (source[i+1]==='+')
 						i+=2;
 						column+=2;
 					}
@@ -138,8 +139,11 @@ export class Debugger
 
 		this.output_callback = (val)=>{};
 		this.input_callback = ()=>{return 0;};
-		this.optimize=true;
+
 		this.cell_width = DEFAULT_CELL_WIDTH;
+		this.optimize=true;
+		this.allow_wrapping = true;
+		this.allow_negative_pointer = false;
 	}
 
 	load(source){
@@ -237,12 +241,11 @@ export class Debugger
 				else
 				{
 					token.value_stack.push(this.tape[this.pointer]);
+					if(this.tape[this.pointer] && !this.allow_wrapping && token.is_positive)
+					{
+						throw("[+]-type construct throws cell value out of bounds");
+					}
 					this.tape[this.pointer] = 0;
-				}
-
-				if ( typeof this.tape[this.pointer] !== "number")
-				{
-					throw "Oh my gooooood";
 				}
 				break;
 
@@ -252,16 +255,25 @@ export class Debugger
 				else
 					this.tape[this.pointer]+=token.value;
 
-				this.tape[this.pointer]%=this.cell_width;
-				if(this.tape[this.pointer] < 0)
-					this.tape[this.pointer] = this.cell_width+this.tape[this.pointer];
+				if
+				(
+					this.tape[this.pointer] < 0 ||
+					this.tape[this.pointer] >= this.cell_width
+				)
+				{
+					if(!this.allow_wrapping)throw("Cell value out of bounds");
+
+					this.tape[this.pointer]%=this.cell_width;
+					if(this.tape[this.pointer] < 0)
+						this.tape[this.pointer] = this.cell_width+this.tape[this.pointer];
+				}
 				break;
 			case TokenType.BF_SHIFT:
 				if(reverse)
 					this.pointer-=token.value;
 				else
 					this.pointer+=token.value;
-				if(this.pointer<0)
+				if(this.pointer<0 && !this.allow_negative_pointer)
 					throw(`Pointer out of bounds(pointer=${this.pointer}, direction=${reverse?"reverse":"forward"}) at line ${token.line+1} column ${token.column+1}`);
 				break;
 			case TokenType.BF_INPUT:
@@ -345,5 +357,14 @@ export class Debugger
 
 		if(stepagain)
 			this.step(reverse);
+	}
+
+	get current_value()
+	{
+		return this.tape[this.pointer];
+	}
+	set current_value(val)
+	{
+		this.tape[this.pointer] = val;
 	}
 }

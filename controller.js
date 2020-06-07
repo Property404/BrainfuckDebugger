@@ -95,8 +95,11 @@ function updateSettings()
 	code_editor.setOption("lineNumbers",settings.get("line-numbers"));
 	code_editor.setOption("autoCloseBrackets",settings.get("close-brackets"));
 	code_editor.setOption("matchBrackets",settings.get("match-brackets"));
+
 	debug.cell_width = 2**settings.get("cell-width");
 	debug.optimize=settings.get("optimize");
+	debug.allow_negative_pointer = settings.get("double-tape");
+	debug.allow_wrapping = settings.get("wrapping-allowed");
 	step_delay=settings.get("step-delay");
 
 	/* New Theme */
@@ -315,7 +318,7 @@ function updateTape()
 	{
 		old_cell.classList.remove("active");
 	}
-	if(!debug.atBeginning())
+	if(!debug.atBeginning() && pointer >= 0)
 	{
 		const val = debug.tape[pointer]||0;
 		const current_cell = tape.querySelector("#cell-"+pointer||0);

@@ -60,6 +60,8 @@ export class Settings
 				new Option("line-numbers", true),
 				new Option("close-brackets", true),
 				new Option("match-brackets", true),
+				new Option("wrapping-allowed", true),
+				new Option("double-tape", false),
 			];
 		this.update_callback = update_callback;
 		this.options_map = {};
