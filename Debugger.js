@@ -146,8 +146,6 @@ export class Debugger
 		this.source = source;
 		this.tokens = tokenize(source, this.optimize);
 		this.tape = {"0":0};
-		this.pc = 0; // Program pointer/counter
-		this.pointer = 0; // Data pointer
 		this.reset();
 	}
 
@@ -170,10 +168,6 @@ export class Debugger
 		}
 		total += this.pointer * 100000;
 		let pcval = this.tokens[this.pc].type;
-		if (pcval === TokenType.BF_LOOP_CLOSE)
-		{
-			pcval = TokenType.BF_LOOP_OPEN;
-		}
 		total += 1000*pcval;
 		return total;
 	}
