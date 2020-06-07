@@ -47,7 +47,7 @@ function tokenize(source, optimize=true)
 					{
 						new_token.type=TokenType.BF_ZERO;
 						new_token.value_stack = [];
-						new_token.is_positive = (source[i+1]==='+')
+						new_token.is_positive = (source[i+1]==='+');
 						i+=2;
 						column+=2;
 					}

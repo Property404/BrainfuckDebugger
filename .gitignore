@@ -2,7 +2,7 @@
 !**/**/
 !.gitignore
 !*.js
-!*.mjs
 !*.html
 !*.css
+!package.json
 node_modules

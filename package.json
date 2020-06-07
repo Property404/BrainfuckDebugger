@@ -1,0 +1,22 @@
+{
+  "name": "BrainfuckDebugger",
+  "author":{
+	  "name":"Dagan Martinez",
+	  "url":"https://dagans.dev"
+  },
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Brainfuck (Reverse-)Debugger",
+  "repository": "https://github.com/Property404/BrainfuckDebugger",
+  "main": "test.js",
+  "dependencies": {
+    "codemirror-minified": "^5.54.0"
+  },
+  "devDependencies": {
+  },
+  "scripts": {
+    "test": "node --experimental-modules test.js"
+  },
+  "license": "MIT",
+  "private":true
+}

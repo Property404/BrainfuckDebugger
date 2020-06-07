@@ -264,8 +264,9 @@ function main()
 		}catch(e){
 			console.log(test.name + " FAILED");
 			console.log(e);
-			break;
+			return -1;
 		}
 	}
+	return 0;
 }
-main();
+process.exit(main());
