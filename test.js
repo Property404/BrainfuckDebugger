@@ -58,10 +58,11 @@ const SOURCES = [
 	}
 ];
 
-function basic_validation_test(){
+function basic_validation_test(optimize=true){
 	for(const source of SOURCES)
 	{
 		const debug = new Debugger(source.code);
+		debug.optimize = optimize;
 		for(const token of debug.tokens)
 		{
 			if (token.partner)
@@ -83,10 +84,11 @@ function basic_validation_test(){
 	return true;
 
 }
-function congruent_state_test(){
+function congruent_state_test(optimize=true){
 	for(const source of SOURCES)
 	{
 		const debug = new Debugger(source.code);
+		debug.optimize = optimize;
 
 		let output = "";
 		debug.output_callback = (val)=>{output+=val;};
@@ -124,10 +126,11 @@ function congruent_state_test(){
 	}
 	return true;
 }
-function two_steps_back_test(){
+function two_steps_back_test(optimize=true){
 	for(const source of ["+++++[->+.+<]>>>"])
 	{
 		const debug = new Debugger(source);
+		debug.optimize = optimize;
 
 		while(!debug.atEnd())
 		{
@@ -161,8 +164,9 @@ function two_steps_back_test(){
 	return true;
 }
 
-function rewind_test(){
+function rewind_test(optimize=true){
 	const debug=new Debugger();
+	debug.optimize = optimize;
 	for(const source of SOURCES)
 	{
 		let output="";
@@ -212,9 +216,10 @@ function rewind_test(){
 	return true;
 }
 
-function pinpoint_test(){
+function pinpoint_test(optimize=true){
 	const code = ">++<.>>+>-[+]++>++>+++[>[->+++<<+++>]<<]";
 	const debug=new Debugger(code);
+	debug.optimize = optimize;
 
 	let i=0;
 	let initial_hash = debug.getStateHash();
@@ -239,12 +244,17 @@ function pinpoint_test(){
 function main()
 {
 	const tests =
-		[
+	[
 		basic_validation_test,
 		pinpoint_test,
 		rewind_test,
 		congruent_state_test,
 		two_steps_back_test,
+
+		// Optimization disabled
+		basic_validation_test.bind(null,false),
+		pinpoint_test.bind(null,false),
+		two_steps_back_test.bind(null,false),
 	];
 	for(const test of tests)
 	{
