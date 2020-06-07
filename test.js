@@ -29,15 +29,15 @@ function codifyString(str)
 }
 const SOURCES = [
 	{
+		code:"+++[->++<]>>--->>++",
+		expected_result:""
+	},
+	{
 		code:"------- [+] +++",
 		expected_result:""
 	},
 	{
 		code:"+++++[-]+++",
-		expected_result:""
-	},
-	{
-		code:"+++[->++<]>>--->>++",
 		expected_result:""
 	},
 	{
@@ -106,16 +106,17 @@ function congruent_state_test(){
 		{
 			const hash1=debug.getStateHash();
 			debug.step();
+			
 
 			const hash2=debug.getStateHash();
 			debug.step(true);
 
 			const hash3=debug.getStateHash();
 			debug.step();
+			assert(hash1===hash3, `hash1!==hash3 (pc:${debug.pc}, i:${i})`, debug);
 
 			const hash4=debug.getStateHash();
 
-			assert(hash1===hash3, "hash1!==hash3", debug);
 			assert(hash2===hash4, "hash2!==hash4", debug);
 		}
 
@@ -193,6 +194,12 @@ function rewind_test(){
 
 		assert(debug.getStateHash() == initial_hash, "Initial hash is not the same");
 
+		for(const token of debug.tokens)
+		{
+			if(token.pc_stack)
+				assert(token.pc_stack.length===1, `Ended up with non-empy PC stack in ${token.character}(column:${token.column}): ${token.pc_stack} `);
+		}
+
 		output="";
 		while(!debug.atEnd())
 		{
@@ -200,6 +207,7 @@ function rewind_test(){
 		}
 
 		assert(output === source.expected_result, "After rewind: expected output not matched");
+
 	}
 	return true;
 }
@@ -233,9 +241,9 @@ function main()
 	const tests =
 		[
 		basic_validation_test,
-		congruent_state_test,
-		rewind_test,
 		pinpoint_test,
+		rewind_test,
+		congruent_state_test,
 		two_steps_back_test,
 	];
 	for(const test of tests)

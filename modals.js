@@ -53,7 +53,6 @@ for(const modal of document.querySelectorAll(".modal"))
 	for(const switch_button of switch_buttons)
 	{
 		const switch_id = switch_button.getAttribute("data-goto");
-		console.log(switch_id);
 		if(switch_button !== switch_buttons[0])
 			document.querySelector(`#${switch_id}`).hidden = true;
 
@@ -71,9 +70,7 @@ for(const button of document.querySelectorAll(".modal-activator"))
 	else if(button.hasAttribute("data-modal-focus"))
 	{
 		const id = button.getAttribute("data-modal-focus");
-		console.log(id);
 		const modal = document.getElementById(id);
-		console.log(modal);
 		handler = focusOnModal.bind(null, id);
 	}
 	else

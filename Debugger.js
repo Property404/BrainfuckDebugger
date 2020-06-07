@@ -54,15 +54,12 @@ function tokenize(source, optimize=true)
 					{
 						new_token.type = TokenType.BF_LOOP_OPEN;
 						skip_stack.push(token_index);
-						// Each entry  in the pass stack is used to determine
-						// how many times we've gone through a loop
-						// This allows for reverse debugging
-						new_token.pass_stack = [];
-						new_token.in_progress = false;
+						new_token.pc_stack = [];
 					}
 					break;
 				case "]":
 					new_token.type = TokenType.BF_LOOP_CLOSE;
+					new_token.pc_stack = [];
 					// [ and ] need to be mated
 					new_token.partner = skip_stack.pop();
 					if(
@@ -195,6 +192,7 @@ export class Debugger
 
 	reset()
 	{
+		this.last_pc=0;
 		this.pc = 0;
 		this.pointer=0;
 		for(const i in this.tape)
@@ -203,14 +201,13 @@ export class Debugger
 		}
 		for (const token of this.tokens)
 		{
-			if(token.pass_stack)
-				token.pass_stack.length = 0;
 			if(token.value_stack)
 				token.value_stack.length = 0;
-			if(token.in_progress)
-				token.in_progress = false;
-			if(token.initial)
-				token.initial = false;
+			if(token.pc_stack !== undefined)
+			{
+				token.pc_stack.length = 0;
+				token.pc_stack.push(0);
+			}
 		}
 	}
 
@@ -219,6 +216,8 @@ export class Debugger
 		let stepagain = false;
 		if(reverse)
 			this.pc --;
+
+		let pc_going_forth = this.pc;
 
 		if(this.pc<0 || this.pc>this.tokens.length)
 		{
@@ -274,8 +273,8 @@ export class Debugger
 			case TokenType.BF_INPUT:
 				if(!reverse)
 				{
-					const new_val  = this.input_callback(); 
 					const old_val  = this.tape[this.pointer];
+					const new_val  = this.input_callback(); 
 					if(new_val === null)
 					{
 						// Effectively do nothing, not even move PC
@@ -306,57 +305,30 @@ export class Debugger
 					this.output_callback(ch);
 				}
 				break;
+
 			case TokenType.BF_LOOP_OPEN:
-				if(!reverse)
-				{
-					if(!token.initial)
-					{
-						token.pass_stack.push(0);
-					}
-					if(this.tape[this.pointer])
-					{
-						token.in_progress = true;
-						token.initial = true;
-						token.pass_stack[token.pass_stack.length-1]++;
-					}
-					else
-					{
-						if(!token.in_progress && token.initial)
-							token.pass_stack[token.pass_stack.length-1]++;
-						// Otherwise we just pass by 
-						this.pc = token.partner;
-						token.in_progress = false;
-						token.initial = false;
-					}
-				}
-				else
-				{
-					if(typeof token.in_progress !== "boolean")
-						throw("Unexpected inprogress value");
-					if(token.pass_stack.slice(-1)[0]>token.in_progress)
-					{
-						token.pass_stack[token.pass_stack.length-1]--;
-						this.pc = token.partner;
-						token.initial = true;
-					}
-					else
-					{
-						token.pass_stack.pop();
-						token.in_progress = false;
-						token.initial = false;
-					}
-				}
-				break;
 			case TokenType.BF_LOOP_CLOSE:
 				if(!reverse)
 				{
-					this.pc = token.partner-1;
-					stepagain = true;
+					token.pc_stack.push(this.last_pc+1);
+
+					if
+					(
+						(token.type === TokenType.BF_LOOP_CLOSE && this.tape[this.pointer])||
+						(token.type === TokenType.BF_LOOP_OPEN && !this.tape[this.pointer])
+					)
+					{
+						this.tokens[token.partner].pc_stack.push(this.pc);
+						this.pc = token.partner;
+					}
 				}
 				else
 				{
-					this.pc = token.partner+1;
-					stepagain = true;
+					this.pc = token.pc_stack.pop();
+					if(this.pc == token.partner)
+					{
+						this.tokens[token.partner].pc_stack.pop();
+					}
 				}
 				break;
 			case TokenType.BF_START:
@@ -374,6 +346,8 @@ export class Debugger
 				throw("Program counter out of bounds (pc = "+this.pc+")");
 			}
 		}
+
+		this.last_pc = pc_going_forth;
 
 		if(stepagain)
 			this.step(reverse);
