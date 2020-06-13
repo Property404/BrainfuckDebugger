@@ -544,8 +544,11 @@ document.getElementById("clear-breakpoints").
 
 document.querySelectorAll("#examples-modal button[data-example]").forEach(
 	button=>button.addEventListener("click",
-		e=>code_editor.setOption("value",
-			getExample(e.target.getAttribute("data-example")))
+		e=>{
+			code_editor.setOption("value",
+			getExample(e.target.getAttribute("data-example")));
+			loadAndReset();
+		}
 	)
 );
 
