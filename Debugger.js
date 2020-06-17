@@ -19,6 +19,56 @@ export const TokenType = Object.freeze({
 	"BF_END": 9,
 });
 
+/*
+ * Stack structure that keeps records of what was popped
+ * When pushing, if there is a previously popped value,
+ * ignore the value the user wants to push, and push
+ * the historical value instead
+ */
+class EfficientStack
+{
+	constructor()
+	{
+		this._internal_stack=[]
+		this.clear();
+	}
+
+	clear()
+	{
+		this._internal_stack.length = 0;
+		this._stack_pointer = 0;
+	}
+
+	push(val)
+	{
+		if(this._stack_pointer > this._internal_stack.length)
+		{
+			throw("EfficientStack: can't push: sp>stack length");
+		}
+		if(this._stack_pointer === this._internal_stack.length)
+		{
+			this._internal_stack.push(val)
+		}
+
+		this._stack_pointer++;
+	}
+
+	pop()
+	{
+		if(this._stack_pointer===0)
+		{
+			throw("EfficientStack: can't pop: nothing to pop");
+		}
+
+		this._stack_pointer--;
+		return this._internal_stack[this._stack_pointer];
+	}
+	
+	get length(){
+		return this._stack_pointer;
+	}
+}
+
 // Adapted from Property404/dbfi/src/interpret.c
 // See original source for helpful comments or lack thereof
 function tokenize(source, optimize=true)
@@ -55,12 +105,12 @@ function tokenize(source, optimize=true)
 					{
 						new_token.type = TokenType.BF_LOOP_OPEN;
 						skip_stack.push(token_index);
-						new_token.pc_stack = [];
+						new_token.pc_stack = new EfficientStack();
 					}
 					break;
 				case "]":
 					new_token.type = TokenType.BF_LOOP_CLOSE;
-					new_token.pc_stack = [];
+					new_token.pc_stack = new EfficientStack();
 					// [ and ] need to be mated
 					new_token.partner = skip_stack.pop();
 					if(
@@ -203,7 +253,7 @@ export class Debugger
 				token.value_stack.length = 0;
 			if(token.pc_stack !== undefined)
 			{
-				token.pc_stack.length = 0;
+				token.pc_stack.clear();
 				token.pc_stack.push(0);
 			}
 		}

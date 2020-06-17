@@ -201,7 +201,7 @@ function rewind_test(optimize=true){
 		for(const token of debug.tokens)
 		{
 			if(token.pc_stack)
-				assert(token.pc_stack.length===1, `Ended up with non-empy PC stack in ${token.character}(column:${token.column}): ${token.pc_stack} `);
+				assert(token.pc_stack.length===1, `Ended up with non-empty PC stack in ${token.character}(column:${token.column}): ${token.pc_stack} `);
 		}
 
 		output="";
@@ -241,10 +241,26 @@ function pinpoint_test(optimize=true){
 	return true;
 }
 
+function multiple_openings_test(){
+	const code = "+++[>]";
+	const debug=new Debugger(code);
+
+	debug.step();
+	debug.step();
+	for(let i=0;i<10;i++){
+		const prev_hash = debug.getStateHash();
+		debug.step();
+		debug.step(true);
+		assert(prev_hash == debug.getStateHash(), "Failed after "+i)
+	}
+	return true;
+}
+
 function main()
 {
 	const tests =
 	[
+		multiple_openings_test,
 		basic_validation_test,
 		pinpoint_test,
 		rewind_test,
