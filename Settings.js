@@ -1,10 +1,11 @@
 import {getExample} from "./examples.js";
+const LOCAL_STORAGE_PREFIX = "brainfuck_debugger_app__";
 // let's still be functional even if storage is disabled
 let fauxStorage={};
 export function putLocalStorage(key, value)
 {
 	try{
-		localStorage[key] = value;
+		localStorage[LOCAL_STORAGE_PREFIX+key] = value;
 	}catch(e){
 		fauxStorage[key] = value;
 	}
@@ -13,7 +14,7 @@ export function accessLocalStorage(key)
 {
 	let val;
 	try{
-		val = localStorage[key];
+		val = localStorage[LOCAL_STORAGE_PREFIX+key];
 	}catch(e){
 		val = fauxStorage[key];
 	}
