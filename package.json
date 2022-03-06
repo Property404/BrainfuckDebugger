@@ -10,7 +10,7 @@
   "repository": "https://github.com/Property404/BrainfuckDebugger",
   "main": "test.js",
   "dependencies": {
-    "codemirror-minified": "^5.54.0"
+    "codemirror-minified": "^5.65.0"
   },
   "devDependencies": {
   },
