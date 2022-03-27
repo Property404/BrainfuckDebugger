@@ -2,8 +2,10 @@
 !**/**/
 !.gitignore
 !*.js
+!*.cjs
 !*.html
 !*.css
-!package.json
-!package-lock.json
+!*.json
+!*.yaml
+!*.yml
 node_modules

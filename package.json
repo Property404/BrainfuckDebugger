@@ -1,8 +1,8 @@
 {
   "name": "BrainfuckDebugger",
-  "author":{
-	  "name":"Dagan Martinez",
-	  "url":"https://dagans.dev"
+  "author": {
+    "name": "Dagan Martinez",
+    "url": "https://dagans.dev"
   },
   "version": "0.1.0",
   "type": "module",
@@ -13,10 +13,14 @@
     "codemirror-minified": "^5.65.0"
   },
   "devDependencies": {
+    "eslint": "^8.11.0",
+    "js-beautify": "^1.14.0"
   },
   "scripts": {
-    "test": "node --experimental-modules test.js"
+    "test": "node --experimental-modules test.js",
+    "format": "js-beautify --end-with-newline *.js",
+    "lint": "eslint *.js"
   },
   "license": "MIT",
-  "private":true
+  "private": true
 }
